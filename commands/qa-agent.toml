@@ -1,0 +1,2 @@
+description = "Run the full QA workflow: PRD → Documentation → Manual Testing → Retest → Automation"
+prompt = "Run the full QA agent workflow using the qa-agent skill. Guide the user through all 5 phases with approval gates between each phase. Staging URL if provided: {{args}}"

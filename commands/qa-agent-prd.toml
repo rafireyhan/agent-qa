@@ -1,0 +1,2 @@
+description = "Agent QA PRD: explore a staging app and generate PRD.md + User_Stories.md"
+prompt = "Run Agent QA PRD using the qa-agent-prd skill. Ask the user for the staging URL if not provided, explore the app, and produce qa-docs/PRD.md and qa-docs/User_Stories.md. Staging URL if provided: {{args}}"

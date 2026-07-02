@@ -1,0 +1,2 @@
+description = "Agent QA Documentation: create Test Plan and Test Cases from PRD and User Stories"
+prompt = "Run Agent QA Documentation using the qa-agent-documentation skill. Ask the user for the PRD.md and User_Stories.md paths if not provided, then produce qa-docs/Test_Plan.md and qa-docs/Test_Cases.md. Path if provided: {{args}}"

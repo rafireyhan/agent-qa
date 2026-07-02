@@ -1,0 +1,2 @@
+description = "Agent QA Retest: retest failed cases, verify bug fixes, run smoke + regression tests"
+prompt = "Run Agent QA Retest using the qa-agent-retest skill. Ask the user for Test Cases path, Bug Report path, and staging URL if not provided. Retest all Failed test cases, verify bug fixes, run Smoke Test and Regression Test. Path if provided: {{args}}"

@@ -1,0 +1,22 @@
+name: qa-agent
+version: 1.0.0
+description: >
+  End-to-end QA workflow with 5 specialized agents: PRD analysis, test
+  documentation, manual testing, retest, and Playwright automation.
+  Each agent runs step-by-step with user approval gates. Run /qa-agent
+  for the full cycle or individual agents for a specific phase.
+author: mcahya20
+provides_commands:
+  - qa-agent
+  - qa-agent-prd
+  - qa-agent-documentation
+  - qa-agent-manual-testing
+  - qa-agent-retest
+  - qa-agent-automation
+provides_skills:
+  - qa-agent
+  - qa-agent-prd
+  - qa-agent-documentation
+  - qa-agent-manual-testing
+  - qa-agent-retest
+  - qa-agent-automation

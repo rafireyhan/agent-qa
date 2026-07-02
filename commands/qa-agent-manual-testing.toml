@@ -1,0 +1,2 @@
+description = "Agent QA Manual Testing: execute test cases, update status, and document bugs"
+prompt = "Run Agent QA Manual Testing using the qa-agent-manual-testing skill. Ask the user for the Test Cases path and staging URL if not provided, execute all test cases, update statuses, and produce qa-docs/List_Feedback.md. Path if provided: {{args}}"

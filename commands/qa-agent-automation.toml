@@ -1,0 +1,2 @@
+description = "Agent QA Automation: generate Playwright test scripts from Test Cases and produce HTML report"
+prompt = "Run Agent QA Automation using the qa-agent-automation skill. Ask the user for Test Cases path and staging URL if not provided. Generate Playwright tests in tests/playwright/ using Page Object Model, run them, and produce the HTML report. Path if provided: {{args}}"
