@@ -17,19 +17,24 @@ Run the full cycle at once with `/qa-agent`, or enter at any phase individually.
 
 ## Installation
 
-Installation is a two-step process. Run both commands inside Claude Code:
+Run these three commands inside Claude Code:
 
-**Step 1 — Register the marketplace**
+**Step 1 — Add the marketplace**
 ```
-/plugin add-marketplace github:rafireyhan/agent-qa
+/plugin marketplace add rafireyhan/agent-qa
 ```
 
 **Step 2 — Install the plugin**
 ```
-/plugin install qa-agent
+/plugin install qa-agent@qa-agent
 ```
 
-Then restart Claude Code. The `/qa-agent` commands will be available in any project.
+**Step 3 — Reload plugins**
+```
+/reload-plugins
+```
+
+The `/qa-agent` commands will be available immediately in any project.
 
 ## Commands
 
