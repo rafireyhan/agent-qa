@@ -1,0 +1,9 @@
+{
+  "name": "qa-agent",
+  "version": "1.0.0",
+  "description": "End-to-end QA workflow with 5 agents: PRD analysis, test documentation, manual testing, retest, and Playwright automation.",
+  "author": {
+    "name": "mcahya20",
+    "url": "https://github.com/rafireyhan"
+  }
+}
