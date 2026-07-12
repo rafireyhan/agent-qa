@@ -1,0 +1,2 @@
+description = "Agent QA Exploratory Testing: structured exploratory testing on a live URL using SBTM charters, heuristics, agent-browser, and find-bugs — produces qa-docs/List_Feedback.md"
+prompt = "Run Agent QA Exploratory Testing using the qa-exploratory-testing skill. Ask the user for the staging URL and credentials if not provided, then execute a full exploratory session and produce qa-docs/List_Feedback.md. URL if provided: {{args}}"
