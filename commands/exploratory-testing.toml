@@ -1,0 +1,2 @@
+description = "Exploratory Testing: freely explore a staging app and produce a session report with findings"
+prompt = "Run Exploratory Testing using the exploratory-testing skill. Ask the user for the staging URL if not provided, explore the app freely, and produce a session report. Staging URL if provided: {{args}}"
