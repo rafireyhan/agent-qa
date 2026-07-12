@@ -110,24 +110,108 @@ Fetch `userEnteredFormat.backgroundColor` for the full content range and confirm
 ## QA Agents & Skills
 
 ### QA Agent Pipeline (`qa-agent:*`)
+Use these in order for a full QA cycle:
 
 | Agent | Invoke with | What it does |
 |-------|------------|-------------|
 | `qa-agent-prd` | `/qa-agent-prd` | Explores staging app → writes `PRD.md` + `User_Stories.md`. Pauses for approval before saving. |
-| `qa-agent-documentation` | `/qa-agent-documentation` | Reads `PRD.md` + `User_Stories.md` → generates `Test_Plan.md` + `Test_Cases.md`. Pauses for approval before saving. |
+| `qa-agent-documentation` | `/qa-agent-documentation` | Reads `PRD.md` + `User_Stories.md` → generates `Test_Plan.md` + `Test_Cases.md` (spreadsheet-ready tables). Pauses for approval before saving. |
 | `qa-agent-manual-testing` | `/qa-agent-manual-testing` | Executes every row in `Test_Cases.md` against staging → updates Pass/Fail + produces `List_Feedback.md`. Pauses for approval before saving. |
 | `qa-agent-retest` | `/qa-agent-retest` | Re-tests previously failed cases. |
 | `qa-agent-automation` | `/qa-agent-automation` | Automated test execution via Playwright. |
 | `qa-agent` | `/qa-agent` | General-purpose QA agent / orchestrator. |
+| `qa-exploratory-testing` | `/qa-exploratory-testing` | Structured exploratory testing on a live URL using `exploratory-testing` (SBTM/charters/heuristics) + `agent-browser` + `find-bugs` → creates/updates `List_Feedback.md`. Asks template selection before saving. |
 
-### Supporting QA Skills
+### Supporting QA Skills (standalone or used internally by agents above)
 
 | Skill | Invoke with | What it does |
 |-------|------------|-------------|
 | `qa-test-planner` | `/qa-test-planner` | Plans test strategy |
 | `test-case-writing` | `/test-case-writing` | Writes test cases |
 | `webapp-testing` | `/webapp-testing` | Tests web apps |
-| `exploratory-testing` | `/exploratory-testing` | Exploratory / ad-hoc testing |
 | `smoke-test` | `/smoke-test` | Quick smoke test run |
 | `find-bugs` | `/find-bugs` | Finds bugs and security issues in current branch diff |
 | `agent-browser` | `/agent-browser` | Browser automation — navigate, click, fill forms, screenshot, scrape |
+
+---
+
+## List Feedback Templates
+
+### Template Selection Rule (REQUIRED)
+
+**Never generate a List Feedback immediately.** This rule applies whenever List Feedback output is triggered by:
+- `/qa-agent-manual-testing`
+- `/qa-exploratory-testing [url]`
+- `/qa-agent-retest`
+- Any explicit request to "build list feedback" or "buat list feedback"
+
+**Always pause and ask first:**
+> "Template mana yang ingin digunakan untuk List Feedback?"
+> 1. List Feedback Kabayan Format
+> 2. Standard Format
+
+Wait for the user to select before generating anything. Generate strictly following the chosen template — no column mixing.
+
+---
+
+### Available Templates
+
+#### 1. Standard Format
+
+Simple English-language bug report. Columns:
+
+| Column | Description |
+|--------|-------------|
+| Bug ID | `BUG-001`, `BUG-002`, … |
+| TC ID | Linked test case ID, or `—` if from exploratory testing |
+| Bug Title | Short English title |
+| Severity | Critical / High / Medium / Low |
+| Module | Feature area name |
+| Steps to Reproduce | Numbered steps |
+| Expected Behavior | What should happen |
+| Actual Behavior | What actually happened |
+| Status | Open (default) |
+| Dev Notes | Left blank for developer |
+
+---
+
+#### 2. List Feedback Kabayan Format
+
+Professional Indonesian-language bug report. Created per-project in a new Google Spreadsheet (user provides the target spreadsheet). Visual reference for colors and chip formatting: spreadsheet `1GiJ800TVEL4RxBnNX6aguvC8qw3jIiRa` ("List Feedback" sheet — Omni Bogor 2026).
+
+**Defect ID format:** `<AppInitials>-<NN>` — first two letters of the app name, e.g. Aepsilon → `AE-01`, AE-02.
+
+**Columns (A → J):**
+
+| Col | Header | Rules |
+|-----|--------|-------|
+| A | Defect ID | `<AppInitials>-01`, `<AppInitials>-02`, … |
+| B | Date | `DD-MMM-YYYY`, e.g. `12-Jul-2026` |
+| C | Crede | Role (e.g. Administrator, Staff, Customer) or username + password used during testing |
+| D | Fitur | Hierarchical path from top nav to action, e.g. `Menu A - Submenu A - Create`. Auth → `Auth` |
+| E | Bug Description | Professional Indonesian. Include: observed behavior, expected behavior, steps to reproduce. Optional UX recommendation: starts with `Baiknya...`, ends with `(Jika memungkinkan).` |
+| F | Priority | Dropdown: Low / Medium / High / Critical — use predefined color-coded chip from Omni Bogor reference |
+| G | Status | Dropdown — use predefined color-coded chip from Omni Bogor reference (see lifecycle below) |
+| H | QA | Always `Cahya` — use existing formatted chip |
+| I | Attachment / Comment From QA | Screenshots (.png) or screen recordings (.mov) + technical notes in Indonesian. Include Network tab errors when available |
+| J | Attachment / Comment From Dev | Left blank — filled by developer |
+
+**Priority chip colors (from Omni Bogor reference):**
+- Low → blue/teal
+- Normal → yellow
+- High → orange
+- Critical → red
+
+**Status lifecycle:**
+
+| Status | Set by | Meaning |
+|--------|--------|---------|
+| Open | QA | Default for all new bugs |
+| On Progress | Developer | Dev is investigating or fixing |
+| Hold | QA or Dev | Blocked — awaiting clarification, or prior stage not yet complete |
+| Ready to Test | Developer | Fix complete, ready for QA retest |
+| Failed | QA | Retest done — bug still present |
+| Done | QA | Retest passed — bug resolved |
+| Ready for Deploy | Developer | Fix approved, awaiting deployment |
+
+**Output location:** `qa-docs/List_Feedback.md` (markdown) or a new Google Spreadsheet tab when building in Sheets via gws CLI.
