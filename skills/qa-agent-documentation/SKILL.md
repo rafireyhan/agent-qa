@@ -261,6 +261,39 @@ Dates are stored as **serial numbers** (e.g. `46227` = 24-Jul-2026) with a `DD-M
 
 ---
 
+### SC / TC Structuring Conventions (how to carve scenarios & phrase steps)
+
+Refined from real UAT scripts — apply these unless the user's own manual rows show a different house style (always read a user-written SC/TC block first and match it).
+
+**Granularity — one SC per section/feature that has an actionable interaction:**
+- Name the page-open scenario `Akses Halaman <Page>`; name each interactive section `Kelola Section <SectionName>`.
+- **Display-only sections get NO SC/TC.** A section with no user action (a chart/graph, a static widget) is only enumerated in the Access-TC's expectation list — never its own SC. Chart legend-toggle / export-download are NOT counted as testable actions.
+- **Don't create a "verify X displays" TC** for something already listed in the Access-TC expectation (e.g. no separate "verify KPI cards" TC).
+- **One TC per action**, with a generic action name: `Buka <Page>`, `Ubah filter periode`, `View Detail data`, `Lihat Semua data`.
+
+**Every TC is self-contained (repeat the nav preamble):**
+- Steps 1–3 of EVERY TC are the identical navigation preamble:
+  1. "Login sebagai <Role>" → "Berhasil login, masuk ke area <role>"
+  2. "Klik Modul <Module>" → "Berhasil menampilkan menu \"<Menu>\""  *(wording order = Modul → Menu)*
+  3. "Klik menu <Menu>" → "Berhasil menampilkan halaman <Page> dan menampilkan:" followed by an unordered list (`- `) of every counting card + every section the page renders.
+- The `Buka <Page>` TC is JUST these 3 steps (no action step). Every other TC = these 3 steps + its action step(s).
+- **Action step wording:** "Pada Section <X>, <action>" → "Berhasil menampilkan <result>" (e.g. "Pada Section Registrasi Baru, klik button Lihat Semua" → "Berhasil menampilkan semua data Registrasi Baru").
+- **Filter = ONE consolidated step**, not one step per option: "Pilih Filter berdasarkan:" + bullet list of dimensions → "Berhasil menampilkan data yang sesuai".
+
+**General phrasing rules:**
+- **No test data in Step text** — write "Login sebagai Admin", not "(email admin@… / password …)". Keep credentials/inputs out of the wording.
+- **Expectation always states the intended SUCCESS behavior**, even when the step is marked `Failed` (the status reflects reality; the expectation documents intent).
+- **TC numbering resets to 01 at every new SC.**
+
+### Execution-status convention (when delivering a pre-verified script)
+
+Some projects want the script delivered already reflecting a live verification pass rather than blank defaults. In that mode (confirm with the user; overrides the Status Defaults table above):
+- **Developer**: every step `Success` + the test date (e.g. `18-Aug-2026`, stored as serial with `DD-MMM-YYYY` format).
+- **Tester**: `Success` + date by default; any step whose expectation FAILED during live verification → `Failed` + date. File the underlying bug for List Feedback.
+- **CLIENT**: leave empty (no status, no date) → client roll-up evaluates to "".
+
+---
+
 ### Build Approach (Google Sheets API via gws CLI)
 
 Never build structure manually — always **`copyPaste` an existing, correctly-formatted block, then overwrite only the text.** copyPaste carries formatting, relative-adjusted formulas, and status/date cells in one shot.
@@ -282,6 +315,8 @@ Never build structure manually — always **`copyPaste` an existing, correctly-f
 - Remove a step: `deleteDimension`.
 - On insert/delete, Google **auto-adjusts** aggregate & summary formula ranges — verify after, but usually no manual fix needed.
 
+> **⚠️ CLEAR trailing rows; do NOT `deleteDimension` them.** When creating a module by `duplicateSheet`, remove the leftover reference content by **clearing** `A5:Z1000` (step A.3) — clearing preserves the summary COUNTIFS end-anchor. If you instead `deleteDimension` the trailing rows down to the last used row, Google shrinks the summary end-anchor (e.g. `$D$806` → `$D$22`). Case/Scenario stay right (they use full-column `COUNTIF`), so the break hides — but any SC/TC later appended beyond the shrunk anchor is **silently not counted**. If you already deleted, re-widen the rows 2–4 COUNTIFS anchors back to a generous row (e.g. `$806`).
+
 **C. Adjusting step count inside a copied TC block:**
 - **fewer steps**: `deleteDimension` the excess step rows
 - **more steps**: `insertDimension` (`inheritFromBefore:true`), then immediately `copyPaste PASTE_FORMAT` from the step row above
@@ -299,6 +334,7 @@ Never build structure manually — always **`copyPaste` an existing, correctly-f
 2. **Failed `copyPaste` leaks source colors** — if quota hit, target rows keep the source's formatting; fix with `copyPaste PASTE_FORMAT` from a correct reference row of the same type
 3. **Aggregate formula too narrow** — after any copyPaste/insert it may cover only the first 2 steps; widen to all steps
 4. **Partial TC fixes leave step rows wrong** — always also fix step-row colors after any partial TC-header fix
+5. **Summary range shrunk by `deleteDimension`** — trailing-row deletion collapses the rows 2–4 COUNTIFS end-anchor, so TCs added later aren't counted. Prefer CLEAR over delete; if deleted, re-widen the anchor. (See Build Approach §B.)
 
 **Fix always:** `copyPaste PASTE_FORMAT` from a visually-correct row of the same type in the same sheet. Never hardcode RGB.
 
@@ -317,6 +353,8 @@ Fetch `userEnteredFormat.backgroundColor` for the full content range and confirm
 8. Rows beyond last content → white, no ghost formatting
 
 Also confirm: SC/TC numbering is sequential with no duplicates; each TC-header aggregate formula spans all its steps; summary counts (Case / Scenario / statuses) updated correctly.
+
+**Read back a summary FORMULA (not just its value)** to confirm the rows 2–4 COUNTIFS end-anchor still covers a generous row (e.g. `$806`) and hasn't been shrunk by a trailing delete — a wrong anchor produces plausible-looking-but-undercounted status totals. Cross-check the status totals against the actual TC-header roll-ups (count the `Success`/`Failed` header cells manually and compare). Note: conditional formatting (Success=green / Failed=red) lives in `effectiveFormat.backgroundColor`, NOT `userEnteredFormat` — check `effectiveFormat` when verifying status-cell colors.
 
 ---
 
