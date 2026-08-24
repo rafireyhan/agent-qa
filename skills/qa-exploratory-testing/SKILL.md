@@ -35,6 +35,94 @@ what they already cover:
 
 ---
 
+## Testing budget — UX / E2E first (read this before you start)
+
+Split your effort **~90% UX / end-to-end functional testing, ~10% security.**
+Real users hit UX and workflow defects far more often than an injection or an
+access-control hole — and those UX/E2E bugs are exactly the ones a
+security-tuned mindset silently walks past.
+
+- **UX / E2E (the 90%)** — "does this actually work and feel right for a real
+  user?" Full CRUD, workflows, list sorting/search/pagination, save-time
+  validation, create→edit data persistence, navigation/button wiring, empty &
+  error states, localization, dashboards, affordances, responsive. Drive every
+  feature end to end on the intended account — happy path plus realistic mistakes.
+- **Security (the 10%)** — "how can this be abused?" Access control (IDOR /
+  privilege escalation), XSS/injection on rendered inputs, info disclosure. A
+  deliberate spot-check pass, not the main event.
+
+**Learn the UX pass from `UX-Framework.md`** (same directory as this file): the
+"FLOW-VISED" heuristic, a per-module ~15-min quick pass, task lists (Lists,
+Search/Filter/Pagination, Forms, Validation, Upload, Navigation, Data
+consistency, States, Feedback, i18n, Affordances, Dashboards, Responsive), and
+a catalogue of recurring UX bug patterns — each tied to a real defect from a
+past engagement, so it doubles as a learning source.
+
+**Rule of thumb:** a bug you only see with DevTools open = security lens; a bug
+a user would *see, feel, or get stuck on* = UX lens. If a session's findings
+come out almost all security, you skewed — rebalance toward UX next session.
+
+---
+
+## Cycle-based method (default operating model)
+
+Run exploratory testing as **three sequential cycles**, each its own SBTM
+session (own charter, own debrief). All cycles share **one ledger** (defects +
+coverage log) so later cycles know what is already covered and found.
+**Default scope = Cycle 1 only.** After each cycle, pause and get **explicit
+user approval before starting the next** (see *Gate between cycles* below) — the
+user may stop after any cycle.
+
+**Cycle 0 — Recon (quick, shared, ~5 min):** read `qa-docs/*`, map the screens,
+the record statuses, and the endpoints/IDs visible in the Network tab. Write the
+charters. Open the shared ledger.
+
+**Cycle 1 — UI / End-user (functional, UX, E2E) — DEFAULT:** act as a real end
+user, driving every flow **through the UI only** (type, click, submit). This is
+the **source of truth for user-facing behavior** — ground-truth every claim
+against stored data / the record list, never the HTTP response. The ~90% UX/E2E
+budget above lives here. File user-facing defects.
+
+**Cycle 2 — API / Contract & robustness (only after approval):** its job is
+**"what does the UI hide?"** For each validation the UI enforced in Cycle 1,
+send the request **directly, bypassing the client**, and check whether the
+**server** also enforces it. Plus API-only surface: mass assignment, parameter
+tampering, undocumented endpoints, filter/sort/pagination abuse.
+
+**Cycle 3 — Security / Adversarial (only after approval):** assume hostile.
+IDOR/BOLA (swap another user's record ID), privilege escalation (lower role
+hits admin routes), stored/reflected XSS, CSRF, sensitive-data exposure. Uses
+the ID/endpoint map from Cycles 0–2.
+
+**Boundary Cycle 2 vs 3:** Cycle 2 = *trust but verify the contract* (does the
+API validate/behave correctly). Cycle 3 = *assume hostile* (actively exploit).
+IDOR / broken access control lives in Cycle 3.
+
+### Cross-cycle rules (do not skip)
+
+- **UI-first is mandatory.** A finding from a direct API/`fetch` request is NOT
+  a user-facing bug — the client may validate what the server does not. Never
+  report an API-bypass finding as though a normal user hits it; label it
+  robustness/defense-in-depth (Cycle 2) or security (Cycle 3). *(This rule
+  exists because a past session reported "no validation" from API probes that
+  had silently bypassed working client-side validation — verify through the UI
+  first, always.)*
+- **Dedup by linking/annotating — never silently skip.** If a later cycle
+  re-encounters an issue already filed, do **not** refile and do **not** drop
+  it: **annotate the existing defect** with the new layer of evidence (e.g.
+  "Cycle 1: blocked in UI; Cycle 2: server accepts it when bypassed → root cause
+  is server-side") and **re-rate severity** if the wider blast radius warrants
+  it. A UI-blocked issue that is also server-open is more severe than UI-only.
+- **Tag every defect** with **found-in cycle** (UI / API / SEC) and
+  **root-cause layer** (client / server / both).
+- **Gate between cycles.** After each cycle: debrief + coverage + surface
+  findings live, then wait for explicit approval to proceed to the next cycle.
+- **Data hygiene across cycles.** Track every record created in the ledger;
+  clean up via the app's own delete when possible, otherwise flag exact IDs for
+  admin cleanup at the end.
+
+---
+
 ## STEP 1 — Check context, then ask only for what's missing
 
 Read whatever context already exists (injected block + the `qa-docs/*` files
@@ -160,7 +248,7 @@ operations, timing.)
 ### Prioritization (two levels — not in conflict)
 
 - **Which area first (risk-based):** business-critical paths (auth, checkout, payment) > recently changed areas > everything else.
-- **Within a feature (test-type order):** Functional → CRUD → Business Rules → Input Validation → Network/API → UI/UX → Security → Responsive.
+- **Within a feature (test-type order):** Functional → CRUD → Business Rules → Input Validation → UI/UX & workflow → Network/API → Security → Responsive. Per the 90/10 budget above, UI/UX & workflow is where most time goes; Security is the ~10% spot-check — don't let it eat the session.
 
 **Vary your approach across the session** — part on the "happy path done
 wrong," part on deliberately breaking state, part on visual/UX inconsistency.
