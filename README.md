@@ -180,6 +180,10 @@ These Claude Code skills must be installed:
 
 ## Changelog
 
+### 1.2.1
+
+- **Exposed `/exploratory-testing`** — the standalone exploratory-testing skill/command (freely explore a staging app → session report) is now declared in `plugin.yaml`, so it installs as a real command alongside the charter-driven `/qa-exploratory-testing`.
+
 ### 1.2.0
 
 - **New agent: `/qa-agent-app-discovery`** — a discovery phase (Phase 0) that runs before `/qa-agent-prd`. Explores a new staging app end-to-end across every role and menu and writes `{{project_name}}_Context.md` as the baseline the PRD and test planning build on. Registered in `plugin.yaml` (`provides_commands` + `provides_skills`) and documented above.

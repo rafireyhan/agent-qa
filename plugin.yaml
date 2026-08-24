@@ -1,5 +1,5 @@
 name: qa-agent
-version: 1.2.0
+version: 1.2.1
 description: >
   End-to-end QA workflow with specialized agents: PRD analysis, test
   documentation, manual testing, retest, Playwright automation, and
@@ -16,6 +16,7 @@ provides_commands:
   - qa-agent-retest
   - qa-agent-automation
   - qa-exploratory-testing
+  - exploratory-testing
 provides_skills:
   - qa-agent
   - qa-agent-app-discovery
@@ -25,3 +26,4 @@ provides_skills:
   - qa-agent-retest
   - qa-agent-automation
   - qa-exploratory-testing
+  - exploratory-testing
