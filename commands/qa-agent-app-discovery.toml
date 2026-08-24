@@ -1,0 +1,2 @@
+description = "Agent QA App Discovery: learn a new app first — explore it end-to-end and write {{project_name}}_Context.md"
+prompt = "Run Agent QA App Discovery using the qa-agent-app-discovery skill. Parse any given inputs (project name, staging URL, credentials/roles, base folder), ask once for whatever is missing, explore the app end-to-end across every role and menu via agent-browser, confirm the save path, and produce {{project_name}}_Context.md. Inputs if provided: {{args}}"

@@ -32,6 +32,7 @@ Or enter at any single phase:
 
 | Command | Phase | Produces |
 |---------|-------|----------|
+| `/qa-agent-app-discovery [url]` | 0. Discover | `{{project_name}}_Context.md` |
 | `/qa-agent-prd [url]` | 1. Understand | `PRD.md`, `User_Stories.md` |
 | `/qa-agent-documentation` | 2. Plan | `Test_Plan.md`, `Test_Cases.md` |
 | `/qa-agent-manual-testing` | 3. Test | Updated `Test_Cases.md` (pass/fail) + `List_Feedback.md` |
@@ -39,7 +40,7 @@ Or enter at any single phase:
 | `/qa-agent-automation` | 5. Automate | Playwright scripts + HTML report |
 
 ```
-/qa-agent-prd  →  /qa-agent-documentation  →  /qa-agent-manual-testing
+/qa-agent-app-discovery  →  /qa-agent-prd  →  /qa-agent-documentation  →  /qa-agent-manual-testing
                                                       │
                                             *** dev fixes bugs ***
                                                       │
@@ -77,12 +78,25 @@ playwright-report/          # index.html automation report
 
 | Agent | Command | Skills used | Output |
 |-------|---------|-------------|--------|
+| App Discovery | `/qa-agent-app-discovery` | `agent-browser` | `{{project_name}}_Context.md` |
 | PRD | `/qa-agent-prd` | `agent-browser` | `PRD.md`, `User_Stories.md` |
 | Documentation | `/qa-agent-documentation` | `qa-test-planner`, `test-case-writing` | `Test_Plan.md`, `Test_Cases.md` |
 | Manual Testing | `/qa-agent-manual-testing` | `webapp-testing`, `find-bugs`, `agent-browser` | Updated `Test_Cases.md`, `List_Feedback.md` |
 | Retest | `/qa-agent-retest` | `smoke-test`, `ai-regression-testing`, `agent-browser` | `Smoke_Test_Report.md` |
 | Automation | `/qa-agent-automation` | `playwright-*` skills | `tests/playwright/`, HTML report |
 | Exploratory | `/qa-exploratory-testing` | `exploratory-testing`, `agent-browser`, `find-bugs` | `List_Feedback.md` |
+
+---
+
+## App Discovery agent
+
+`/qa-agent-app-discovery` is the **"learn the app first"** step — run it before `/qa-agent-prd` on any app the team hasn't mapped yet. It explores a staging app end-to-end via `agent-browser` (every role, every menu / submenu / child menu, every feature) and produces a structured `{{project_name}}_Context.md` that the rest of the pipeline builds on.
+
+- **Discovery, not testing.** It maps what exists — roles, navigation tree, features, states — it does not assert pass/fail or file bugs.
+- **Every role, every menu.** Walks the full navigation for each role so nothing is missed before test planning starts.
+- **Confirms the save path** before writing, and (like every agent here) writes the file only after your approval.
+
+Use it when onboarding a new app; skip it and go straight to `/qa-agent-prd` when the app is already understood.
 
 ---
 
@@ -161,6 +175,26 @@ The full Google Sheets build procedure, cell-color spec, and known pitfalls (quo
 These Claude Code skills must be installed:
 
 `agent-browser` · `exploratory-testing` · `webapp-testing` · `find-bugs` · `qa-test-planner` · `test-case-writing` · `smoke-test` · `ai-regression-testing` · `playwright-cli` · `playwright-best-practices` · `playwright-generate-test` · `playwright-explore-website` · `playwright-automation-fill-in-form`
+
+---
+
+## Changelog
+
+### 1.2.0
+
+- **New agent: `/qa-agent-app-discovery`** — a discovery phase (Phase 0) that runs before `/qa-agent-prd`. Explores a new staging app end-to-end across every role and menu and writes `{{project_name}}_Context.md` as the baseline the PRD and test planning build on. Registered in `plugin.yaml` (`provides_commands` + `provides_skills`) and documented above.
+
+If you already have `qa-agent` installed, pick up this release with:
+
+```
+/plugin marketplace update qa-agent
+/plugin update qa-agent@qa-agent
+/reload-plugins
+```
+
+### 1.1.0
+
+- Added `/qa-exploratory-testing` — charter-driven exploratory testing agent.
 
 ---
 

@@ -114,6 +114,7 @@ Use these in order for a full QA cycle:
 
 | Agent | Invoke with | What it does |
 |-------|------------|-------------|
+| `qa-agent-app-discovery` | `/qa-agent-app-discovery` | "Learn the app first" — explores a new staging app end-to-end across every role/menu → writes `{{project_name}}_Context.md` (discovery baseline before PRD). Confirms save path before writing. |
 | `qa-agent-prd` | `/qa-agent-prd` | Explores staging app → writes `PRD.md` + `User_Stories.md`. Pauses for approval before saving. |
 | `qa-agent-documentation` | `/qa-agent-documentation` | Reads `PRD.md` + `User_Stories.md` → generates `Test_Plan.md` + `Test_Cases.md` (spreadsheet-ready tables). Pauses for approval before saving. |
 | `qa-agent-manual-testing` | `/qa-agent-manual-testing` | Executes every row in `Test_Cases.md` against staging → updates Pass/Fail + produces `List_Feedback.md`. Pauses for approval before saving. |
