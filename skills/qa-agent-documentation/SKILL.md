@@ -294,6 +294,31 @@ Some projects want the script delivered already reflecting a live verification p
 
 ---
 
+### Bulk-changing a role column's status (Developer / Tester / CLIENT)
+
+**Trigger phrases** — when the user says any of these, run the procedure below:
+- "Ubah status setiap step Tester jadi **Pending** / **Success** / **Failed** / **Need Test**"
+- "ganti / ubah / reset status kolom **Tester** (atau **Developer** / **CLIENT**) jadi `<value>`"
+- "set every Tester step to Pending", "reset tester status", "kolom Tester jadi Pending"
+
+**Column map:** Developer = **D** (status) / E (date) / F (note); Tester = **G** / H / I; CLIENT = **J** / K / L. "Status" = the D/G/J column.
+
+**Critical gotcha — this is DATA VALIDATION, not conditional formatting.** Each status column has its own dropdown (`ONE_OF_LIST`), and in the CVKC template the lists DIFFER:
+- Developer (D) & CLIENT (J): `[Success, Failed, Pending]`
+- **Tester (G): `[Success, Failed, Need Test]`**
+
+So writing `Pending` into a Tester cell shows **"Invalid: Input must be an item on the specified list"** — even though the TC-header roll-up formula for G already outputs "Pending". You must fix the validation, not just the value. (The user may call this "conditional formatting" — it isn't; it's the dropdown/data-validation list.)
+
+**Procedure — 2 steps, per sheet, for every target sheet in scope:**
+1. **Change the values** — only on **step rows** (column A = an integer). Set the target column (D/G/J) to the new status. **Never overwrite the TC-header cell** (column A = `#TCxx`): it's the roll-up formula and updates automatically. Preserve `Failed` unless told otherwise; leave the date column as-is unless told.
+   - The header roll-up already checks `"Pending"`, so switching values to **Pending** needs **no formula change**. Switching to **Need Test** would force editing the `"Pending"` literal → `"Need Test"` in *every* TC-header formula (much more work, error-prone) — prefer Pending, or confirm before doing Need Test.
+2. **Fix the data validation** so the new value is allowed — easiest is to **copy the validation from a column that already allows it**:
+   `copyPaste` with `pasteType: PASTE_DATA_VALIDATION`, source = a column whose list already contains the value (Developer col D or CLIENT col J both allow `Pending`), destination = the target column, rows `6..rowCount`. One request per sheet; do NOT retype the list, and do NOT touch the whole-row `NUMBER_EQ` conditional-format colour rules.
+
+**Scope & confirm:** ask which spreadsheet(s)/sheets — a "project" may span several files; honor any skip list (e.g. only the sheets we built, skip pre-existing ones). **Only touch step rows (col A = integer)** so summary rows 2–4 and header formulas stay intact. **Verify after:** target column's DV list now contains the value; `Pending` cells no longer flagged Invalid; TC-header cells show the new status; other columns untouched; `Failed` preserved. (Out-of-list values are still stored by the API — they just show an Invalid marker until the DV is fixed.)
+
+---
+
 ### Build Approach (Google Sheets API via gws CLI)
 
 Never build structure manually — always **`copyPaste` an existing, correctly-formatted block, then overwrite only the text.** copyPaste carries formatting, relative-adjusted formulas, and status/date cells in one shot.
