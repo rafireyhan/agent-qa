@@ -1,5 +1,5 @@
 name: qa-agent
-version: 1.2.2
+version: 1.2.3
 description: >
   End-to-end QA workflow with specialized agents: PRD analysis, test
   documentation, manual testing, retest, Playwright automation, and
