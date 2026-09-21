@@ -386,3 +386,70 @@ Also confirm: SC/TC numbering is sequential with no duplicates; each TC-header a
 ### Reference Scripts & Examples
 - `fix_r03.py` / `fix_r04.py` — duplicateSheet approach in Python (BerUang project, spreadsheet `1ZNsDkJQWjE0H48UPH_ax1bwSos59KuXIJnbJwP-DUdg`)
 - Worked example, gws CLI editing an existing sheet (append SC/TC, branch TCs, widen formulas): **K08 - Appointment** in `1-aahhHKmr5o3aAW_jvysPNEa-mVZ7MT0BUnHBrzZv0U`
+
+---
+
+## Test Case Template: Traceability Matrix CVKC — Versi 2 (Kabayan CVKC V2)
+
+**Same roll-up mechanics as CVKC V1** (COUNTIF-based aggregate + range COUNTIFS summary, serial-number dates, `copyPaste`-then-overwrite build discipline, all Pitfalls & Post-Build Verification). Follow the CVKC V1 section above for everything **except** the column layout, roles, and negative-case rules below.
+
+**Reference spreadsheet:** `1N1bR2LOqi9OBMTqHK4SzWxMSXZbbvdgnQ5TPhgGINLI` ("Contoh Template CV KC Baru", sheet `R01-Authentication`).
+
+### What's different from V1
+
+1. **New leftmost column A = `Jenis Test Case`** (`Positif` / `Negatif`), merged as ONE value spanning all step rows of a TC. On header rows column A still holds `#SCxx` / `#TCxx`. → **codes live in A, statuses no longer**; every A-referencing formula shifts.
+2. **New column E = `Actual Result`** (free text — observed outcome), between Expectation and the status blocks.
+3. **Developer role dropped at step level.** Only **two roles: Tester + Client** (2×3 columns).
+4. **Negative cases are IN scope** (opposite of V1's positive-only rule) — the `Jenis Test Case` column exists precisely to tag them. Write both `Positif` and `Negatif` TCs. All other V1 authoring rules (list every form field, branching = one symmetric TC per branch, walk every status, verify live) still apply.
+
+### Column layout — 11 cols A–K
+
+| Col | Header/SC/TC row | Step row |
+|-----|------------------|----------|
+| A | `#SCxx` / `#TCxx` | `Jenis Test Case` (`Positif`/`Negatif`) — merged 1 value per TC |
+| B | SC/TC name (merged B:C) | `#` step number |
+| C | ↑ | `Step` |
+| D | `Tester :` label (merged D:E) | `Expectation` |
+| E | ↑ | `Actual Result` |
+| F | Tester roll-up (merged F:G) | Tester → `Status` |
+| G | ↑ | Tester → `Date Tested` |
+| H | `Client :` label | Tester → `Note` |
+| I | Client roll-up (merged I:K) | Client → `Status` |
+| J | ↑ | Client → `Date Tested` |
+| K | ↑ | Client → `Note` |
+
+Sub-header row: `Jenis Test Case | # | Step | Expectation | Actual Result | Tester (F:H) | Client (I:K)`; col-labels row beneath: `Status | Date Tested | Note` ×2 under F–H and I–K. `Jenis Test Case`/`#`/`Step`/`Expectation`/`Actual Result` merge vertically across both header rows.
+
+### Aggregate roll-up (TC-header row) — literal is `Pending` for BOTH roles
+
+```
+F (Tester): =IF(COUNTIF(F{s}:F{e},"Failed")>0,"Failed",IF(COUNTIF(F{s}:F{e},"Pending")>0,"Pending",IF(COUNTA(F{s}:F{e})=0,"","Success")))
+I (Client): same, on I{s}:I{e}
+```
+Widen `{s}:{e}` to all step rows (same V1 rule). **Note V2 uses `"Pending"` for Tester too** (not V1's `"Need Test"`) → Tester untested value must be `Pending`, or the roll-up misreads it as `Success`.
+
+### Status Defaults (V2)
+
+| Role | Cols (Status/Date/Note) | Default | Valid values |
+|------|-------------------------|---------|--------------|
+| Tester | F / G / H | `Pending` | Pending / Failed / Success |
+| Client | I / J / K | `Pending` | Pending / Failed / Success |
+
+Date = serial number, `DD-MMM-YYYY` display (e.g. `46279` = 14-Sep-2026).
+
+### Summary block (rows 1–3) — CORRECTED (Tester + Client)
+
+⚠️ The reference sheet ships this block **broken/un-migrated**: labels say `Developer`/`Tester`, COUNTIFS point at columns E & H, and code-detection uses column B — so everything reads **0**. When building/fixing V2, write the corrected version:
+
+- Row 1 labels: `C1` = module code+name; `D1..I1` = `Success | Failed | Need Test | Not Tested | Case | Scenario`.
+- **Row 2 = `Tester :`** (status col **F**), **Row 3 = `Client :`** (status col **I**). Codes detected in column **A**:
+  ```
+  D2 =COUNTIFS($F$6:$F$805,"Success",$A$6:$A$805,"#TC*")   E2 =…"Failed"…   F2 =…"Pending"…   G2 =$H$2-(D2+E2+F2)
+  D3 =COUNTIFS($I$6:$I$805,"Success",$A$6:$A$805,"#TC*")   E3 =…"Failed"…   F3 =…"Pending"…   G3 =$H$2-(D3+E3+F3)
+  H2 =COUNTIF($A:$A,"#TC*")   (Case)     I2 =COUNTIF($A:$A,"#SC*")   (Scenario)
+  ```
+  (The `Need Test` column counts the untested literal `Pending`; keep the header label or rename per project.)
+
+### Colors & build
+
+Row-type colors (SC=orange, TC=red, sub-header/col-labels=teal, steps=blue, separators=white) and the whole **Build Approach / Pitfalls / Post-Build Verification** from the V1 section apply unchanged — just over the A–K (11-col) layout. Build by `copyPaste` of a correct block from the reference sheet, then overwrite text; **fix the summary formulas after** (they're broken in the source).
