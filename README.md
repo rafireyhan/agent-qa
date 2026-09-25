@@ -162,11 +162,17 @@ Any agent that produces `List_Feedback.md` pauses and asks which format to use �
 
 ---
 
-## Test case template (CVKC)
+## Test case templates (Traceability Matrix)
 
-The Documentation agent builds test cases using the **"Template Tracebility Matrix CVKC"** (typo intentional — matches the original). Sheet 1 is a feedback recap; Sheet 2+ are module sheets (`Rxx - Module Name`) with `#SCxx` scenario blocks and `#TCxx` test-case blocks. Statuses default to Developer `Pending` / Tester `Need Test` / CLIENT `Pending`.
+The Documentation agent can build a Google Sheets Traceability Matrix in **three** templates. Full build procedure, cell-color specs, house-style, and known pitfalls (quota-silent failures, `insertDimension` color loss, row-height auto-fit) live in [`CLAUDE.md`](CLAUDE.md) — read it before building or fixing a matrix.
 
-The full Google Sheets build procedure, cell-color spec, and known pitfalls (quota-silent failures, `insertDimension` color loss) live in [`CLAUDE.md`](CLAUDE.md) — read it before building or fixing a matrix.
+| Template | Roles | Formulas | Negatives / test data | Module sheet naming |
+|----------|-------|----------|-----------------------|---------------------|
+| **CVKC** (`Template Tracebility Matrix CVKC`) | Developer / Tester / CLIENT | COUNTIF summary + per-TC roll-up | positive-only, no test data | `Rxx - Module` / `Kxx - Module` |
+| **CVKC V2** | Tester + Client (4 cols each) | roll-up mechanics, 13-col A–M | negatives + `Actual Result` col | codes in col A |
+| **TM Kabayan ver Lengkap** | Tester + Client | none (plain text status) | negatives + inline test data | `MO_00x - Module` |
+
+Common to all: statuses default to untested, dates stored as serial numbers with a `DD-MMM-YYYY` display format, and every build is done by `copyPaste`-ing a correctly-formatted block then overwriting text — never editing structure by hand.
 
 ---
 
@@ -179,6 +185,14 @@ These Claude Code skills must be installed:
 ---
 
 ## Changelog
+
+### 1.2.3
+
+- **CVKC V2 gains Evidence columns** — the CVKC Versi 2 template now includes per-shot Evidence columns (I / M, merged per shot) documented in the Documentation agent.
+
+### 1.2.2
+
+- **New template: CVKC Versi 2** — a 13-column (A–M) variant of the CVKC matrix with Tester + Client only, an `Actual Result` column, and negative cases, alongside the original CVKC. See [test case templates](#test-case-templates-traceability-matrix).
 
 ### 1.2.1
 
