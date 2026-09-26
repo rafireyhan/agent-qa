@@ -141,6 +141,27 @@ Also confirm: SC/TC numbering is sequential with no duplicates; each TC-header a
 
 ---
 
+## Test Case Template: CVKC Versi 2 (Kabayan CVKC V2)
+
+Varian 13-kolom (A–M) dari CVKC. **Mekanik roll-up, warna, Build Approach, Pitfalls, dan Post-Build Verification SAMA seperti CVKC V1** — ikuti section CVKC di atas untuk semuanya KECUALI layout kolom, role, dan aturan negatif di bawah. **Full build procedure & formula ada di `skills/qa-agent-documentation/SKILL.md` (§ CVKC Versi 2)** — baca di sana saat membangun/memperbaiki.
+
+**Reference spreadsheet:** `1N1bR2LOqi9OBMTqHK4SzWxMSXZbbvdgnQ5TPhgGINLI` ("Contoh Template CV KC Baru", sheet `R01-Authentication`).
+
+**Beda dari V1:**
+1. **Kolom A = `Jenis Test Case`** (`Positif`/`Negatif`, merged 1 nilai per TC). Di header row A tetap `#SCxx`/`#TCxx`. → kode di A, status TIDAK lagi di A; semua formula yang refer kolom A bergeser.
+2. **Kolom E = `Actual Result`** (free text observed outcome), antara Expectation dan blok status.
+3. **Developer di-drop di level step.** Hanya **2 role: Tester + Client**, masing-masing **4 kolom** (Status/Date/Note/Evidence).
+4. **Kolom `Evidence` per role — `I` (Tester), `M` (Client).** Evidence **BUKAN per-step**: merge sel Evidence vertikal sepanjang step rows yang dicakup 1 screenshot (seperti TM Kabayan). Embed via Drive smart chip.
+5. **Negative cases IN scope** (kebalikan V1 positive-only) — kolom `Jenis Test Case` justru untuk menandainya. Tulis `Positif` & `Negatif`. Aturan authoring V1 lain (list semua field, branching = 1 TC simetris/branch, walk every status, verify live) tetap berlaku.
+
+**Roll-up literal = `Pending` untuk KEDUA role** (bukan `Need Test` seperti V1): `=IF(COUNTIF(F{s}:F{e},"Failed")>0,"Failed",IF(COUNTIF(F{s}:F{e},"Pending")>0,"Pending",IF(COUNTA(F{s}:F{e})=0,"","Success")))` (Tester col F; Client col J). Tester untested HARUS `Pending`, atau roll-up salah baca `Success`. Evidence I/M dikecualikan dari roll-up.
+
+**Status default (V2):** Tester (F/G/H/I) = `Pending`; Client (J/K/L/M) = `Pending`. Valid: Pending/Failed/Success. Date = serial number, display `DD-MMM-YYYY`.
+
+**⚠️ Summary block (rows 1–3) di reference sheet SHIP BROKEN** (label Developer/Tester salah, COUNTIFS ke kolom salah, deteksi kode pakai col B → semua baca 0). Saat build/fix, tulis versi terkoreksi: Row 2 = `Tester:` (status col F), Row 3 = `Client:` (status col J), deteksi kode di col A. Formula lengkap di SKILL.md documentation.
+
+---
+
 ## Test Case Template: TM Kabayan ver Lengkap
 
 A **separate, simpler** traceability-matrix template — do NOT confuse with CVKC. No formulas, no roll-ups, includes negative cases, inline test data. When the user names this template, follow the rules below.
