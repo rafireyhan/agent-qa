@@ -121,6 +121,58 @@ IDOR / broken access control lives in Cycle 3.
   clean up via the app's own delete when possible, otherwise flag exact IDs for
   admin cleanup at the end.
 
+### Negative testing in Cycle 1 (mandatory subset + disclaimer)
+
+Cycle 1 is UX/E2E-first but it is **NOT "happy-path only".** Always run this
+baseline negative subset **through the UI**, ground-truthing every result
+against stored data (count records before/after — never trust the toast alone):
+
+- **Duplicate unique value — for EVERY CRUD feature** (also mandated above):
+  create/update with an already-existing unique value (name, email, code, NIK,
+  slug, SKU…) and confirm it is rejected. Do this on **every** module, not a
+  sample — and confirm the app gives **clear feedback**, not a silent
+  success-looking modal close.
+- **Required-field validation:** submit each create/edit form with required
+  fields blank → expect a clear message, not a crash. Watch for the
+  **"optional-in-UI but NOT NULL in DB" trap** → a 500 with a raw SQL/DB error
+  is a **High** bug (crash **and** info disclosure).
+- **Format / boundary:** invalid email, leading/trailing spaces, very long
+  strings, out-of-range numbers, and every documented guard (e.g. quantity ≤
+  available).
+- **Output encoding (light security spot-check, still Cycle 1):** put an HTML/JS
+  marker (e.g. `<img src=x onerror=…>`) in a text field, save, and confirm it
+  renders **escaped** in the list/detail (not executed).
+
+**Disclaimer rule (transparency — never skip).** Whatever negative checks you
+did NOT run in Cycle 1 (duplicate on only some modules, no format/boundary,
+no upload-negatives, no security payloads, etc.), **state it explicitly** in
+both the live debrief and the end-of-session summary, so the user knows the
+exact negative coverage and never assumes it was exhaustive. If the project's
+UAT script is **positive-only**, still run these negatives during exploration
+and file findings to List Feedback — just don't add negative rows to the
+positive script.
+
+### Test-data fixtures (`test-data/`)
+
+The engagement repo ships a ready-made fixtures folder — **`test-data/` at the
+project root** (sibling of `qa-docs/`, *not* inside it). Use it for both
+happy-path and negative-path input, especially **file-upload / import** fields.
+Read `test-data/README.md` first; regenerate anytime with
+`python3 test-data/generate.py`.
+
+- `test-data/images/` — exact byte sizes (`png-1kb … png-10mb.png`) for
+  size-limit tests, fixed dimensions/aspect ratios, valid tiny samples per format.
+- `test-data/documents/` — `sample.pdf/.docx/.xlsx/.csv/.json/.xml/.txt` for
+  non-image uploads and import fields.
+- `test-data/edge-cases/` — **negative uploads:** empty/0-byte, `fake-image.png`
+  (text renamed), wrong-MIME, no-extension, `double-extension.png.exe`,
+  corrupted, spaces/unicode/special/very-long filenames, `oversized-15mb.png`,
+  uppercase extension.
+- `test-data/security/` — **staging only, requires explicit authorization:**
+  `xss.svg`, `xxe.xml`, `xss-filename<script>.txt`, `formula-injection.csv`.
+  Reserve for Cycle 2/3 or a sanctioned security pass; never send to
+  production/third-party systems.
+
 ---
 
 ## STEP 1 — Check context, then ask only for what's missing
