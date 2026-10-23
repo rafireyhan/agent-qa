@@ -1,0 +1,2 @@
+description = "Smoke Testing: run happy-path smoke test driven by UAT Script / Traceability Matrix (Google Sheet or Test_Cases.md)"
+prompt = "Run Smoke Testing using the qa-smoke-test skill. Parse inputs (project name, folder, staging URL, credentials, UAT script source), perform preflight check asking once for missing items and List Feedback template choice, execute happy-path cases with ground-truth UI verification, and produce List Feedback with user approval. Inputs if provided: {{args}}"

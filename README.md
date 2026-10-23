@@ -36,6 +36,7 @@ Or enter at any single phase:
 | `/qa-agent-prd [url]` | 1. Understand | `PRD.md`, `User_Stories.md` |
 | `/qa-agent-documentation` | 2. Plan | `Test_Plan.md`, `Test_Cases.md` |
 | `/qa-agent-manual-testing` | 3. Test | Updated `Test_Cases.md` (pass/fail) + `List_Feedback.md` |
+| `/qa-smoke-test [script] [url]` | 3b. Smoke Test | `List Feedback ({{project_name}}).md` |
 | `/qa-agent-retest` | 4. Retest | `Smoke_Test_Report.md` + updated files |
 | `/qa-agent-automation` | 5. Automate | Playwright scripts + HTML report |
 
@@ -82,6 +83,7 @@ playwright-report/          # index.html automation report
 | PRD | `/qa-agent-prd` | `agent-browser` | `PRD.md`, `User_Stories.md` |
 | Documentation | `/qa-agent-documentation` | `qa-test-planner`, `test-case-writing` | `Test_Plan.md`, `Test_Cases.md` |
 | Manual Testing | `/qa-agent-manual-testing` | `webapp-testing`, `find-bugs`, `agent-browser` | Updated `Test_Cases.md`, `List_Feedback.md` |
+| Smoke Testing | `/qa-smoke-test` | `agent-browser`, `webapp-testing`, `find-bugs` | `List Feedback ({{project_name}}).md` |
 | Retest | `/qa-agent-retest` | `smoke-test`, `ai-regression-testing`, `agent-browser` | `Smoke_Test_Report.md` |
 | Automation | `/qa-agent-automation` | `playwright-*` skills | `tests/playwright/`, HTML report |
 | Exploratory | `/qa-exploratory-testing` | `exploratory-testing`, `agent-browser`, `find-bugs` | `List_Feedback.md` |
@@ -185,6 +187,11 @@ These Claude Code skills must be installed:
 ---
 
 ## Changelog
+
+### 1.3.1
+
+- **New skill & command: `/qa-smoke-test`** — Smoke testing driven by an existing UAT Script / Traceability Matrix (Google Sheets CVKC or local `Test_Cases.md`). Includes preflight parameter checks, ground-truth UI verification, dual-template List Feedback authoring (Kabayan or Standard format), and explicit user approval gate.
+- **Universal QA Pod Orchestration (Sena)**: Integrated `/qa-smoke-test` into `qa-manual` agent responsibilities and Sena dispatch protocols.
 
 ### 1.2.3
 
