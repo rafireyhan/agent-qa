@@ -173,6 +173,8 @@ npx playwright test --reporter=html
 
 Show the user real-time output as tests run. If any test fails, show the error and screenshot path.
 
+For each failure, verify whether it is a product defect rather than a flaky test, broken fixture, or environment problem. File each confirmed defect yourself through `../qa-bug-reporting/SKILL.md` in the project's existing List Feedback. Keep the test failure and its screenshot/trace as evidence; an HTML test report does not replace the bug entry.
+
 ### Step 5 — Results review
 
 After tests complete, show the results:
@@ -206,6 +208,7 @@ Confirm:
 > - `tests/playwright/pages/` ([N] page object files)
 > - `tests/playwright/tests/` ([N] spec files, [N] total tests)
 > - `playwright-report/index.html` (open in browser to view full report)
+> - `qa-docs/List_Feedback.md` ([N] confirmed product defects filed, if any)
 >
 > **Full QA workflow complete.**
 > All artifacts are in `qa-docs/` and `tests/playwright/`."

@@ -69,40 +69,13 @@ Use the available browser and test tools to execute each row. `webapp-testing`, 
 **Progress reporting:** After every 10 test cases, report:
 > "Progress: **[N]/[total]** — [X] Passed, [Y] Failed"
 
-### Step 3 — Compile Bug Report
+### Step 3 — File confirmed bugs
 
-Follow the [shared List Feedback rules and Cahya's writing preferences](../../references/qa-standards.md#list-feedback-templates), including concise descriptions and no added cell notes or threaded comments unless requested. Apply the existing or chosen format rather than assuming the generic example below. Never put credentials in the report.
-
-After all test cases are executed, write `qa-docs/List_Feedback.md`:
-
-```
-# List Feedback — Bug Report
-
-**Project:** [App Name]
-**Testing Date:** [date]
-**Tested By:** Agent QA Manual Testing
-
-## Summary
-| Total Bugs | Critical | High | Medium | Low |
-|------------|----------|------|--------|-----|
-| [N] | [N] | [N] | [N] | [N] |
-
-## Bug List
-
-| Bug ID | TC ID | Bug Title | Severity | Module | Steps to Reproduce | Expected Behavior | Actual Behavior | Status | Dev Notes |
-|--------|-------|-----------|----------|--------|--------------------|-------------------|-----------------|--------|-----------|
-| BUG-001 | TC-XXX | [Short title] | Critical/High/Medium/Low | [Module] | 1. [Step]<br>2. [Step]<br>3. [Step] | [What should happen] | [What actually happened] | Open | |
-```
-
-**Severity rules:**
-- **Critical** — crash, data loss, security hole, complete feature outage
-- **High** — major feature broken, user cannot complete a core task, no workaround
-- **Medium** — feature partially works, workaround exists
-- **Low** — cosmetic defect, minor wording, non-blocking UI glitch
+Use `../qa-bug-reporting/SKILL.md` to write each confirmed defect directly into the project's existing List Feedback, or create the chosen template when none exists. Include the failed TC ID, exact observation, expected behavior, steps, severity, and evidence. Recheck for duplicates and use the shared-report lock when writing; do not rebuild or overwrite another agent's entries.
 
 ### Step 4 — Results review
 
-Show the complete results summary before saving anything:
+Show the complete results summary:
 
 > "**Testing complete. Here are the results:**
 >
@@ -124,14 +97,14 @@ Show the complete results summary before saving anything:
 
 ### Step 5 — Save Files
 
-Write the updated `qa-docs/Test_Cases.md` (with all statuses filled in) and `qa-docs/List_Feedback.md`.
+Write the updated `qa-docs/Test_Cases.md` with observed statuses and verify that your confirmed bug entries are present in the shared `qa-docs/List_Feedback.md`. Preserve entries made by other agents.
 
 Confirm:
 > "**Agent QA Manual Testing complete.**
 >
 > Saved:
 > - `qa-docs/Test_Cases.md` (status updated: [N] Passed, [N] Failed)
-> - `qa-docs/List_Feedback.md` ([N] bugs documented)
+> - `qa-docs/List_Feedback.md` ([N] bugs filed by this agent)
 >
 > **Next steps:**
 > 1. Share `qa-docs/List_Feedback.md` with the development team

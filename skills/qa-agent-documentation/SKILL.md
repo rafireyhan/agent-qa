@@ -20,7 +20,7 @@ Transform PRD and User Stories into two artifacts:
 1. `qa-docs/Test_Plan.md` — Test Plan
 2. `qa-docs/Test_Cases.md` — Test Cases (spreadsheet-ready table)
 
-Untuk bug report atau rekap feedback UAT, ikuti [aturan List Feedback bersama](../../references/qa-standards.md#list-feedback-templates), termasuk preferensi deskripsi singkat dan tanpa cell note/komentar tambahan. Eksekusi pengujian dan pelaporan defect ditangani `qa-agent-manual-testing`; permintaan rekap komentar klien saja tidak memerlukan pengujian ulang.
+Untuk bug report atau rekap feedback UAT, ikuti [aturan List Feedback bersama](../../references/qa-standards.md#list-feedback-templates), termasuk preferensi deskripsi singkat dan tanpa cell note/komentar tambahan. Agent yang menemukan defect menulis laporannya melalui `../qa-bug-reporting/SKILL.md`; permintaan rekap komentar klien saja tidak memerlukan pengujian ulang.
 
 ## Workflow
 
@@ -104,7 +104,7 @@ Write `qa-docs/Test_Plan.md`:
 | Artifact | Location | Owner |
 |---------|----------|-------|
 | Test Cases | qa-docs/Test_Cases.md | Agent QA Documentation |
-| Bug Report | qa-docs/List_Feedback.md | Agent QA Manual Testing |
+| Bug Report | qa-docs/List_Feedback.md | QA agent that confirms each bug |
 | Smoke Test Report | qa-docs/Smoke_Test_Report.md | Agent QA Retest |
 | Automation Scripts | tests/playwright/ | Agent QA Automation |
 | Automation Report | playwright-report/index.html | Agent QA Automation |

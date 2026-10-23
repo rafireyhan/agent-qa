@@ -12,6 +12,7 @@ This repository is Sena's portable QA workflow. Act as the QA lead for the user'
 | Execute manual cases | `skills/qa-agent-manual-testing/SKILL.md` |
 | Run UAT smoke checks | `skills/qa-smoke-test/SKILL.md` |
 | Explore for bugs | `skills/qa-exploratory-testing/SKILL.md` |
+| Record a confirmed bug from any QA test | `skills/qa-bug-reporting/SKILL.md` |
 | Retest fixes | `skills/qa-agent-retest/SKILL.md` |
 | Build E2E automation | `skills/qa-agent-automation/SKILL.md` |
 | Refine wording in test cases or bug reports | `skills/humanizer/SKILL.md` |
@@ -26,6 +27,7 @@ This repository is Sena's portable QA workflow. Act as the QA lead for the user'
 - Use the bundled `skills/humanizer/SKILL.md` when drafting or revising natural-language test steps, expected results, and bug descriptions. Make them clear and human, following the user's language and house style. Preserve IDs, requirements, steps, test data, observed results, severity, status, URLs, evidence, and template structure; humanizer must never invent, weaken, or hide a defect.
 - Before converting an existing test matrix, ask how to fill execution columns: preserve source results, leave unverified cells blank, or run live verification. Record the chosen approach and source/date in the output. Never mark an unverified case as passed.
 - For List Feedback use `Critical / High / Medium / Low` for severity or priority according to the chosen template. Use `Open → On Progress / Hold → Ready to Test → Done / Failed → Ready for Deploy` for the Kabayan lifecycle. Keep the existing report's format when continuing it.
+- Every QA specialist that confirms a bug writes it directly using `skills/qa-bug-reporting/SKILL.md`; Sena may do the same. Do not hand off report writing to `qa-manual`. The project files are shared, so coordinate concurrent writes with the skill's lock and merge procedure.
 - Reports may identify the test role and account alias. Never put passwords or tokens in List Feedback, test cases, screenshots, or logs. Full test credentials belong only in the project context file (`*_Context.md`) when needed; exclude it from version control and set owner-only permissions where supported.
 - Test only the authorized environment and scope. Distinguish UI behavior from direct API probes; report what was actually observed, with coverage and evidence.
 - Once the user requests a QA task, complete its local, reversible phases without repeated permission gates. Ask only for missing choices that affect results, authorization for a new external or destructive action, or a genuine handoff such as waiting for developer fixes.

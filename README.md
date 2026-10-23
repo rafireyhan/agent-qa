@@ -99,7 +99,7 @@ playwright-report/          # index.html automation report
 | Manual Testing | `/qa-agent-manual-testing` | `webapp-testing`, `find-bugs`, `agent-browser` | Updated `Test_Cases.md`, `List_Feedback.md` |
 | Smoke Testing | `/qa-smoke-test` | `agent-browser`, `webapp-testing`, `find-bugs` | `List_Feedback.md` |
 | Retest | `/qa-agent-retest` | `smoke-test`, `ai-regression-testing`, `agent-browser` | `Smoke_Test_Report.md` |
-| Automation | `/qa-agent-automation` | `playwright-*` skills | `tests/playwright/`, HTML report |
+| Automation | `/qa-agent-automation` | `playwright-*`, `qa-bug-reporting` | `tests/playwright/`, HTML report, confirmed bugs in `List_Feedback.md` |
 | Exploratory | `/qa-exploratory-testing` | `exploratory-testing`, `agent-browser`, `find-bugs` | `List_Feedback.md` |
 
 ---
@@ -155,7 +155,7 @@ Read at the start of every session; relevant sections applied per feature.
 
 ## List Feedback templates
 
-Any agent that produces `List_Feedback.md` reuses the existing format. If there is no report or explicit choice, Sena asks once which format to use. Columns are never mixed.
+Every QA agent, including API, automation, manual, and nonfunctional, files its own confirmed bugs through [qa-bug-reporting](skills/qa-bug-reporting/SKILL.md). The project report is shared: agents reread it, deduplicate findings, and use a short exclusive lock while updating it so parallel runs do not overwrite each other. Sena gives parallel agents the chosen format; a directly invoked agent asks once if neither a report nor a choice exists. Columns are never mixed.
 
 **Standard Format (English):** `Bug ID` · `TC ID` · `Bug Title` · `Severity` · `Module` · `Steps to Reproduce` · `Expected` · `Actual` · `Status` · `Dev Notes`
 
@@ -203,6 +203,10 @@ Sena uses the browser, shell, and spreadsheet capabilities available in the host
 ---
 
 ## Changelog
+
+### 1.6.0
+
+- Shared bug reporting for every QA specialist, with direct List Feedback writes and coordination for parallel agents.
 
 ### 1.5.0
 

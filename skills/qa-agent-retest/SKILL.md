@@ -124,7 +124,7 @@ Execute **all** test cases (not just previously failed ones). The goal is to cat
 For each test case that was previously "Passed":
 - Re-execute it
 - If it now fails: mark Status `Failed` and identify it as a regression in Notes
-- Add it to `qa-docs/List_Feedback.md` as a new bug with note "Regression Bug — found during retest [date]"
+- File it yourself through `../qa-bug-reporting/SKILL.md` in the existing List Feedback with note "Regression Bug — found during retest [date]"
 
 ### Step 6 — Final review
 
@@ -146,7 +146,7 @@ For each test case that was previously "Passed":
 
 ### Step 7 — Save Files
 
-Update `qa-docs/Test_Cases.md`, update `qa-docs/List_Feedback.md`, write `qa-docs/Smoke_Test_Report.md`. Preserve the report's chosen template and existing comments. Avoid overwriting unrelated changes.
+Update `qa-docs/Test_Cases.md`, update `qa-docs/List_Feedback.md` through the shared bug-reporting lock procedure, and write `qa-docs/Smoke_Test_Report.md`. Preserve the report's chosen template and existing comments. Avoid overwriting unrelated changes.
 
 Confirm:
 > "**Agent QA Retest complete.**

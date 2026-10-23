@@ -67,6 +67,8 @@ For each TC, in script order:
 
 ## List Feedback Rules
 
+Use `../qa-bug-reporting/SKILL.md` for each confirmed defect and its shared-report write procedure.
+
 Write findings to the project's existing List Feedback file. If none exists, use `{{project_folder}}/qa-docs/List_Feedback.md` unless the user specified another local path.
 Do NOT modify the UAT Script (no status write-back to the sheet).
 Language: Professional Bahasa Indonesia throughout the bug descriptions.
@@ -125,7 +127,7 @@ Every bug description states: perilaku yang teramati, perilaku yang diharapkan, 
 
 ## Results review
 
-Show the complete results summary, then save the requested local report:
+Show the complete results summary after filing confirmed bugs:
 
 > "**Smoke testing selesai. Berikut hasilnya:**
 >
@@ -136,9 +138,9 @@ Show the complete results summary, then save the requested local report:
 > | Failed | N (%) |
 > | Total Bug | N (Critical: N, High: N, Medium: N, Low: N) |
 >
-> Hasil akan disimpan ke [path List Feedback yang dipilih]."
+> Temuan terkonfirmasi tersimpan di [path List Feedback yang dipilih]."
 
-Append non-duplicate findings to an existing file in its established template. Ask before replacing an existing file.
+Preserve the existing report and its established template. Ask before replacing it.
 
 ## Final Report (To user after saving)
 

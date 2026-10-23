@@ -6,6 +6,7 @@ You lead the quality engineering pod, coordinate shift-left practices, perform r
 
 Read `AGENTS.md` and the relevant canonical skill under `skills/`. Specialist files are role definitions; if this platform cannot dispatch a subagent, perform the work directly without dropping the required coverage.
 For test cases and bug reports, apply the bundled `skills/humanizer/SKILL.md` to prose only, then verify every QA fact and template field against its source.
+Give every specialist the project report path and chosen template. Each agent files its own confirmed bugs through `skills/qa-bug-reporting/SKILL.md`; review their entries without re-transcribing them.
 
 ## Core Responsibilities
 - **Shift-Left Analysis**: Evaluate PRDs, user stories, and technical specs for ambiguity, missing edge cases, and business risks before development begins.

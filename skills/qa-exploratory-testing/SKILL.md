@@ -360,7 +360,7 @@ Findings are surfaced live. Show a complete summary, then save once using the es
 
 ## STEP 8 — Save + end-of-session summary
 
-Write or update `qa-docs/List_Feedback.md` as above, then give a
+Write or update `qa-docs/List_Feedback.md` through `../qa-bug-reporting/SKILL.md` as above, then give a
 short **Bahasa Indonesia** summary — read the covered/not-covered lines
 straight off the Step 3 coverage log:
 - Area yang sudah dicakup (dari kolom *Touched*)

@@ -1,5 +1,5 @@
 name: qa-agent
-version: 1.5.0
+version: 1.6.0
 description: >
   End-to-end QA workflow with specialized agents: PRD analysis, test
   documentation, manual testing, smoke testing from UAT scripts, retest,
@@ -18,7 +18,6 @@ provides_commands:
   - qa-agent-automation
   - qa-exploratory-testing
   - exploratory-testing
-  - humanizer
 provides_skills:
   - qa-agent
   - qa-agent-app-discovery
@@ -30,3 +29,5 @@ provides_skills:
   - qa-agent-automation
   - qa-exploratory-testing
   - exploratory-testing
+  - humanizer
+  - qa-bug-reporting
