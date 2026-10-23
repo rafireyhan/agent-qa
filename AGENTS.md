@@ -57,6 +57,58 @@ When given a task:
 
 ---
 
+## 4. Ambiguity Resolution & Smart Fallback Heuristics (Saat Prompt Kurang Jelas)
+
+Bila prompt pengguna singkat, ambigu, atau tidak menyebutkan detail teknis lengkap, **AI WAJIB menerapkan heuristik cerdas berikut sebelum meminta klarifikasi atau mengeksekusi:**
+
+### A. Context-First (Cari Dokumen Lokal Dulu Sebelum Bertanya)
+1. **Periksa repositori/folder aktif sebelum bertanya hal sepele**:
+   - Cari folder `qa-docs/` di project untuk melihat apakah sudah ada `{{project}}_Context.md`, `PRD.md`, `User_Stories.md`, atau link spreadsheet UAT.
+   - Jika kredensial akun test (role/user) atau URL staging sudah terdokumentasi di file context, **langsung gunakan** tanpa meminta pengguna mengetiknya ulang.
+2. **Kaidah Klarifikasi Minimum**:
+   - Jika informasi benar-benar tidak ada di codebase atau context, ajukan pertanyaan secara ringkas dan terkonsolidasi dalam **satu pesan**, bukan bertanya bolak-balik berulang kali.
+
+### B. Resolusi Template Traceability Matrix (Bila Tidak Disebut)
+1. **Deteksi Template Eksisting**:
+   - Periksa spreadsheet target atau file context:
+     - Jika ada tab modul berawalan `Rxx` atau `Kxx` dengan warna header orange/merah/teal $\rightarrow$ gunakan **CVKC (V1 atau V2 sesuai sheet acuan)**.
+     - Jika ada tab modul berawalan `MO_00x` dengan styling teal band 13 kolom $\rightarrow$ gunakan **TM Kabayan Lengkap**.
+2. **Jika Template Sama Sekali Belum Ditentukan**:
+   - Tanya pengguna satu kali dengan pilihan to-the-point: *(1) CVKC Versi 2 (13 kolom, Positif/Negatif, ada Evidence), atau (2) TM Kabayan ver Lengkap (13 kolom, multi-row default)*.
+3. **Cakupan Skenario Positif vs Negatif**:
+   - **CVKC V1**: DEFAULT HANYA POSITIF (Happy Path). Dilarang memasukkan skenario negatif/validasi kecuali diminta eksplisit.
+   - **CVKC V2 & TM Kabayan**: DEFAULT MENCAKUP KEDUANYA (Positif & Negatif).
+
+### C. Resolusi List Feedback / Pelaporan Bug
+1. **Aturan Wajib (Template Selection Gate)**:
+   - Dilarang men-generate `List_Feedback.md` secara terburu-buru tanpa memastikan template:
+     - Jika project sudah punya file `qa-docs/List_Feedback.md`, lanjutkan format yang sudah ada di sana.
+     - Jika belum ada, selalu minta konfirmasi format: *(1) List Feedback Kabayan Format (Bahasa Indonesia, spreadsheet/markdown), atau (2) Standard Format (English, Bug ID/Title)*.
+2. **Gaya Penulisan Bug (House-Style Cahya)**:
+   - Deskripsi singkat-padat (1–2 kalimat pemicu, masalah, expected).
+   - Jangan menyalin ulang seluruh test case ke deskripsi.
+   - Sumber UAT jelas: `Sumber: <modul> - <SC> - <TC>`.
+   - Tanpa cell notes / threaded comments tersembunyi.
+
+### D. Safety, Observasi & Eksekusi Lapangan
+1. **Staging Environment Only**:
+   - Verifikasi bahwa URL target adalah environment Staging, Sandbox, atau Localhost. Tolak menjalankan aksi destruktif (delete data, mass update, trigger OTP/SMS massal) di domain yang terindikasi Production.
+2. **UI-First Sebelum API (Anti-False-Alarm)**:
+   - Jika menemukan error via Network tab atau panggilan API langsung (`curl`/`fetch`), jangan langsung dicap sebagai bug user-facing.
+   - Coba dulu lewat antarmuka UI browser (Cycle 1). Jika form UI berhasil memblokir input tersebut, catat temuan tersebut sebagai *robustness/server bypass* (Cycle 2/3), bukan bug fungsional pengguna biasa.
+3. **Never Mirror Expected into Actual (TM Kabayan)**:
+   - Kolom `Actual Result` HARUS berupa parafrase hasil observasi nyata ("Form tampil:", "X berhasil disimpan", "Data tersimpan di list"), jangan menyalin sama persis kata-kata dari Expected Result.
+4. **No Assumption on Permissions**:
+   - Jangan berasumsi bahwa user biasa memiliki akses ke endpoint admin. Selalu uji hak akses sesuai role matriks yang tertera di context.
+
+### E. Prinsip Eksekusi Ponytail (Efisien & Minimal Bloat)
+1. **Targeted Edit Over Full Rebuild**:
+   - Saat memodifikasi Google Spreadsheet via `gws CLI`, gunakan selalu `batchUpdate` pada sel yang berubah saja. Dilarang download seluruh file lalu upload ulang.
+2. **Gunakan Utility yang Sudah Ada**:
+   - Pakai skrip helper yang sudah teruji di folder project (`build`, `merge_wrap`, `actual`, `set_heights`), jangan membuat ulang kode dari nol bila polanya sudah ada.
+
+---
+
 ## Test Case Template: Traceability Matrix CVKC
 
 When building OR editing test cases in this template, follow all rules below exactly.
