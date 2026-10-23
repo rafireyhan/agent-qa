@@ -1,0 +1,5 @@
+{
+  "name": "agent-qa",
+  "version": "1.3.0",
+  "description": "Universal QA Engineering Pod: Sena (Senior QA Lead Orchestrator) + Specialized Subagents (Manual, API, Automation, Non-Functional)."
+}
