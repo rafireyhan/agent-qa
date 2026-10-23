@@ -1,0 +1,6 @@
+{
+  "name": "qa-agent",
+  "version": "1.4.0",
+  "description": "Sena's QA workflows and skills for Codex.",
+  "skills": "./skills/"
+}

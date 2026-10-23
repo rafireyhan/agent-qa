@@ -5,9 +5,11 @@ description: >
   live staging URL using exploratory-testing (SBTM/charters/heuristics),
   agent-browser, and find-bugs. Discovers bugs not covered by test cases,
   then creates or updates qa-docs/List_Feedback.md.
-  Pauses for template selection and user approval before saving.
+  Reuses an existing report format or asks once when none is established.
 argument-hint: "[url]"
 ---
+
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
 
 # Agent QA Exploratory Testing
 
@@ -69,9 +71,7 @@ come out almost all security, you skewed — rebalance toward UX next session.
 Run exploratory testing as **three sequential cycles**, each its own SBTM
 session (own charter, own debrief). All cycles share **one ledger** (defects +
 coverage log) so later cycles know what is already covered and found.
-**Default scope = Cycle 1 only.** After each cycle, pause and get **explicit
-user approval before starting the next** (see *Gate between cycles* below) — the
-user may stop after any cycle.
+**Default scope = Cycle 1 only** unless the user requests API or security coverage too. Report coverage after each requested cycle. Ask before expanding beyond the requested scope.
 
 **Cycle 0 — Recon (quick, shared, ~5 min):** read `qa-docs/*`, map the screens,
 the record statuses, and the endpoints/IDs visible in the Network tab. Write the
@@ -83,13 +83,13 @@ the **source of truth for user-facing behavior** — ground-truth every claim
 against stored data / the record list, never the HTTP response. The ~90% UX/E2E
 budget above lives here. File user-facing defects.
 
-**Cycle 2 — API / Contract & robustness (only after approval):** its job is
+**Cycle 2 — API / Contract & robustness (when requested):** its job is
 **"what does the UI hide?"** For each validation the UI enforced in Cycle 1,
 send the request **directly, bypassing the client**, and check whether the
 **server** also enforces it. Plus API-only surface: mass assignment, parameter
 tampering, undocumented endpoints, filter/sort/pagination abuse.
 
-**Cycle 3 — Security / Adversarial (only after approval):** assume hostile.
+**Cycle 3 — Security / Adversarial (when requested and authorized):** assume hostile.
 IDOR/BOLA (swap another user's record ID), privilege escalation (lower role
 hits admin routes), stored/reflected XSS, CSRF, sensitive-data exposure. Uses
 the ID/endpoint map from Cycles 0–2.
@@ -115,8 +115,7 @@ IDOR / broken access control lives in Cycle 3.
   it. A UI-blocked issue that is also server-open is more severe than UI-only.
 - **Tag every defect** with **found-in cycle** (UI / API / SEC) and
   **root-cause layer** (client / server / both).
-- **Gate between cycles.** After each cycle: debrief + coverage + surface
-  findings live, then wait for explicit approval to proceed to the next cycle.
+- **Between cycles:** debrief + coverage + findings. Continue only through cycles already requested and authorized.
 - **Data hygiene across cycles.** Track every record created in the ledger;
   clean up via the app's own delete when possible, otherwise flag exact IDs for
   admin cleanup at the end.
@@ -135,7 +134,7 @@ against stored data (count records before/after — never trust the toast alone)
 - **Required-field validation:** submit each create/edit form with required
   fields blank → expect a clear message, not a crash. Watch for the
   **"optional-in-UI but NOT NULL in DB" trap** → a 500 with a raw SQL/DB error
-  is a **High** bug (crash **and** info disclosure).
+  is a **Critical** bug (crash **and** info disclosure).
 - **Format / boundary:** invalid email, leading/trailing spaces, very long
   strings, out-of-range numbers, and every documented guard (e.g. quantity ≤
   available).
@@ -154,11 +153,7 @@ positive script.
 
 ### Test-data fixtures (`test-data/`)
 
-The engagement repo ships a ready-made fixtures folder — **`test-data/` at the
-project root** (sibling of `qa-docs/`, *not* inside it). Use it for both
-happy-path and negative-path input, especially **file-upload / import** fields.
-Read `test-data/README.md` first; regenerate anytime with
-`python3 test-data/generate.py`.
+If the project has `test-data/` at its root, read its README and use the relevant fixtures. Run `test-data/generate.py` only if that file exists and regeneration is needed. If no fixtures exist, create only the small local test files required for the authorized scenarios; record what was used. Do not block the session on an absent fixture directory.
 
 - `test-data/images/` — exact byte sizes (`png-1kb … png-10mb.png`) for
   size-limit tests, fixed dimensions/aspect ratios, valid tiny samples per format.
@@ -198,7 +193,7 @@ highest-risk flows — tell me if you'd rather I focus elsewhere") and proceed.
 
 ## STEP 2 — Template + language selection (REQUIRED)
 
-Before exploring, ask **both** in one message and wait for explicit answers:
+If an existing List Feedback establishes its format and language, reuse them. Otherwise ask **both** in one message:
 
 > "Template mana yang ingin digunakan untuk List Feedback?"
 > 1. List Feedback Kabayan Format
@@ -208,8 +203,7 @@ Before exploring, ask **both** in one message and wait for explicit answers:
 > 1. Bahasa Indonesia
 > 2. English
 
-Do not proceed until answered. If `qa-docs/List_Feedback.md` already exists,
-read it and auto-detect its format/language — ask only if ambiguous.
+If `qa-docs/List_Feedback.md` already exists, read it and auto-detect its format/language — ask only if ambiguous.
 
 End-of-session summaries (Step 8) are **always Bahasa Indonesia** regardless of
 choice. Standard QA technical terms may stay in English in any language
@@ -217,7 +211,7 @@ choice. Standard QA technical terms may stay in English in any language
 
 ## STEP 3 — Plan the session (exploratory-testing skill)
 
-Invoke the `exploratory-testing` skill to structure the session before
+Use the bundled `exploratory-testing` skill to structure the session before
 touching the browser — keep it brief, this is live testing not documentation:
 
 1. **One-paragraph charter:** "Explore [area] to find [type of issue], within [time box]."
@@ -334,11 +328,10 @@ relevant).
 attach it to each bug (or note it once at the top of the batch) so a developer
 can reproduce without asking: environment URL, app build/version if visible,
 browser/viewport, and the exact account/role used (this maps to the Kabayan
-`Crede` column). Never record real credentials for real users — staging test
-accounts only.
+`Crede` column). Record only role and staging test account alias; never include a password or token.
 
 **Follow the chosen template exactly — no column mixing** (full column specs in
-the project `CLAUDE.md`):
+the shared [QA standards](../../references/qa-standards.md#list-feedback-templates)):
 
 - **Kabayan Format:** Defect ID (`<AppInitials>-NN`), Date (`DD-MMM-YYYY`), Crede, Fitur, Bug Description, Priority, Status (`Open`), QA (`Cahya`), Attachment/Comment From QA, Attachment/Comment From Dev (blank)
 - **Standard Format:** Bug ID (`BUG-NNN`), TC ID (`—`), Bug Title, Severity, Module, Steps to Reproduce, Expected Behavior, Actual Behavior, Status (`Open`), Dev Notes (blank)
@@ -349,11 +342,9 @@ the project `CLAUDE.md`):
 - **Medium** — feature partially works, workaround exists
 - **Low** — cosmetic, minor wording, non-blocking
 
-## STEP 7 — Approval gate (before saving)
+## STEP 7 — Results review
 
-Findings are surfaced live, but the file is written **only once**, after this
-gate (global rule: never save a List Feedback without template selection +
-approval). Show a complete summary:
+Findings are surfaced live. Show a complete summary, then save once using the established format. If an existing report is present, append new non-duplicate findings; never replace it without the user's explicit instruction.
 
 > "**Exploratory Testing complete.**
 >
@@ -365,13 +356,11 @@ approval). Show a complete summary:
 >
 > **Bug list preview:** [table]
 >
-> Save to `qa-docs/List_Feedback.md` — **Append** or **Replace**?"
-
-Wait for explicit approval and append/replace choice.
+> New findings will be appended to `qa-docs/List_Feedback.md` when it exists."
 
 ## STEP 8 — Save + end-of-session summary
 
-Write or update `qa-docs/List_Feedback.md` per the user's choice, then give a
+Write or update `qa-docs/List_Feedback.md` as above, then give a
 short **Bahasa Indonesia** summary — read the covered/not-covered lines
 straight off the Step 3 coverage log:
 - Area yang sudah dicakup (dari kolom *Touched*)

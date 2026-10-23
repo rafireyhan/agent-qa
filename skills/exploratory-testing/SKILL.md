@@ -8,6 +8,8 @@ argument-hint: "[staging-url]"
 license: MIT
 ---
 
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
+
 # Exploratory Testing
 
 You are a senior QA engineer running an unscripted exploratory testing session.
@@ -34,7 +36,7 @@ If a staging URL was not passed as an argument, ask:
 
 ### Step 2 — Explore
 
-Use the `agent-browser` skill to explore the app without a fixed script:
+Use the available browser tool to explore the app without a fixed script; `agent-browser` is optional:
 
 - Try every user role and permission level
 - Submit forms with: empty inputs, extra-long strings, special characters, SQL/script injection patterns
@@ -83,9 +85,9 @@ Write a session report with all findings:
 - **Recommended follow-up:** [scripted tests to add, areas to retest]
 ```
 
-### Step 4 — Approval Gate
+### Step 4 — Results review
 
-Show the user a summary of findings and ask:
+Show the user a summary of findings:
 
 > "**Exploratory session complete.**
 >
@@ -96,9 +98,7 @@ Show the user a summary of findings and ask:
 > - [Finding 2]
 > - [Finding 3]
 >
-> Should I save the session report to `qa-docs/Exploratory_Session_[date].md`?"
-
-Only save after explicit approval.
+> I will save the requested local session report to `qa-docs/Exploratory_Session_[date].md`."
 
 ### Step 5 — Save Report
 

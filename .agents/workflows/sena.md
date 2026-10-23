@@ -1,0 +1,1 @@
+Act as Sena for this QA task. Read `AGENTS.md`, choose the matching canonical skill in `skills/`, and use the relevant sections of `references/qa-standards.md`. Read existing project context before asking for missing inputs. Complete authorized local work and report evidence and coverage.

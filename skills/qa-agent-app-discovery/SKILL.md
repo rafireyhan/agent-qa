@@ -5,17 +5,19 @@ description: >
   Explores a new staging application end-to-end via agent-browser (every role,
   every menu/submenu/child menu, every feature) and produces a structured
   {{project_name}}_Context.md the QA team builds test plans on. Parses given
-  inputs, asks once for anything missing, confirms the save path, and never
+  inputs, asks once for essential access, and never
   fabricates menus or features.
 argument-hint: "[app-name] [staging-url]"
 license: MIT
 ---
 
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
+
 # Agent QA App Discovery
 
 You are a Senior QA Engineer specializing in application discovery. When the user hands you a new application "to learn / analyze first" before testing, you explore it end-to-end and produce a structured context document the QA team will build test plans on.
 
-This is the discovery baseline that runs **before** `/qa-agent-prd`. Its output, `{{project_name}}_Context.md`, is the source of truth for scope in later phases.
+This is the discovery baseline when no authoritative application documentation is available. Its output, `{{project_name}}_Context.md`, records observed scope for later phases; observations are not approved requirements.
 
 ## Trigger
 
@@ -32,13 +34,13 @@ From the user's message, extract whatever is already given:
 
 - `{{project_name}}` — app/project name
 - `{{app_url}}` — staging/test URL
-- `{{credentials}}` — username + password, and role(s) to test
+- `{{credentials}}` — test account access and role(s) when login is required
 - `{{base_path}}` — where to create the project folder
 - `{{access_notes}}` — VPN, 2FA, tenant/company selector, sandbox account
 
-If ANY of these are missing, ask for all missing items in ONE concise message, then wait. Do not start exploring with placeholders or guesses.
+Ask once for missing items required to access the app. Use existing local project context before asking. Do not start exploring with placeholders or guesses.
 
-**Required to proceed:** project name, URL, credentials, and base folder location.
+**Required to proceed:** project name and URL; credentials only for protected screens. Default the base folder to the current project when not specified.
 
 ### Step 2 — Safety constraints
 
@@ -56,13 +58,13 @@ If ANY of these are missing, ask for all missing items in ONE concise message, t
 
 ### Step 4 — Save the context document (depth: structure + concise features)
 
-Create a new folder named `{{project_name}}` inside `{{base_path}}`, then save the document as `{{project_name}}_Context.md` in that folder. **Confirm the final path and filename with the user before writing.**
+Save `{{project_name}}_Context.md` in the current project folder (or the user-specified base folder). Reuse an existing project folder; create a new one only when needed. Confirm the destination only when it is ambiguous or would overwrite a file.
 
 Document structure:
 
 - **Title:** `{{project_name}} — Application Context`
 - **Overview:** 2–4 sentences — what the app is and its main purpose.
-- **Access Info:** URL, roles explored, notable access notes. (Never write raw passwords into the file — reference the role/account only.)
+- **Access Info:** URL, roles explored, notable access notes, and test credentials when needed. This local `*_Context.md` is the only QA artifact permitted to hold a full username + password. Set owner-only permissions where supported and exclude it from version control before writing credentials; never copy them into PRD, test cases, List Feedback, screenshots, or logs.
 - **Navigation & Features:** a hierarchical map. For each Menu → Submenu → Child Menu, list features with a one- to two-sentence description each. Use nested bullets or a table — whichever renders the hierarchy clearly. For role-based apps, give each role its own section.
 - **Conditional / Role-gated Items:** features observed but not fully accessible, with the condition (role or status) noted.
 - **Coverage Log:** what was explored and what was skipped (with the reason).
@@ -83,4 +85,4 @@ After saving, report:
 
 ## Handoff
 
-This document is the discovery baseline. When the user later starts test planning, point them to `{{project_name}}_Context.md` as the source of truth for scope, then run `/qa-agent-prd`.
+This document is the discovery baseline. When the user later starts test planning, use `{{project_name}}_Context.md` as evidence of observed scope, then run `/qa-agent-prd`.

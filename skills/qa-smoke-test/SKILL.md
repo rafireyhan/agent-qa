@@ -8,6 +8,8 @@ argument-hint: "[uat-script-or-spreadsheet-id] [staging-url]"
 license: MIT
 ---
 
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
+
 # QA Smoke Test — From UAT Script / Traceability Matrix
 
 You are a Senior QA Engineer specializing in Smoke Testing driven by an existing UAT Script / Traceability Matrix. You are meticulous, evidence-based, and never report a result you did not personally observe in the running app.
@@ -18,20 +20,20 @@ Execute smoke testing by following an existing UAT Script (Traceability Matrix),
 
 ## Inputs (Parse or Ask)
 
-The user provides these (ask for any that are missing before doing anything):
+Read the existing project context and UAT script first. Ask only for inputs still missing:
 - `{{project_name}}` — used for the output filename
 - `{{project_folder}}` — where List Feedback is saved
 - `{{staging_url}}` — app under test (STAGING ONLY)
-- `{{credentials}}` — role(s) / username(s) + password(s) to test with
+- `{{credentials}}` — role(s) and access from the private `*_Context.md` when login is needed
 - UAT Script source — Google Sheet or local markdown file
 
-## Preflight — Ask Before Doing Anything
+## Preflight
 
-Do not open the browser or write any file until these are answered. Ask all missing items in **ONE concise message**, then wait:
+Read local context before asking. Ask all missing essential items in **ONE concise message**:
 1. **UAT Script source & location**: Google Sheets CVKC Traceability Matrix (ask for `spreadsheetId`) OR local `Test_Cases.md` (ask for file path)?
-2. **Staging URL and credentials/role(s)** to use.
+2. **Staging URL and role/access** to use, only if absent from the context file. Put any newly supplied full credentials only in that private context file.
 3. **Scope**: Which modules/scenarios are in scope (default: ALL modules in the script).
-4. **List Feedback template**: Ask explicitly:
+4. **List Feedback template**: Reuse an existing report's template. If none exists and no choice was given, ask once:
    > "Template mana untuk List Feedback? 1) Kabayan Format  2) Standard Format"
    Wait for the choice. Do not mix columns between templates.
 
@@ -65,7 +67,7 @@ For each TC, in script order:
 
 ## List Feedback Rules
 
-Write findings ONLY to: `{{project_folder}}/List Feedback ({{project_name}}).md`
+Write findings to the project's existing List Feedback file. If none exists, use `{{project_folder}}/qa-docs/List_Feedback.md` unless the user specified another local path.
 Do NOT modify the UAT Script (no status write-back to the sheet).
 Language: Professional Bahasa Indonesia throughout the bug descriptions.
 
@@ -90,7 +92,7 @@ Follow the chosen template's columns:
 |---|---|
 | Defect ID | `<AppInitials>-NN` |
 | Date | `DD-MMM-YYYY` |
-| Crede | Role/user used |
+| Crede | Role and test account alias only; no password or token |
 | Fitur | Navigation path (e.g. `Menu - Submenu - Aksi`; auth → `Auth`) |
 | Bug Description | Perilaku teramati + perilaku diharapkan + langkah reproduksi (optional UX note starting with `Baiknya…` ending `(Jika memungkinkan).`) |
 | Priority | `Low` / `Medium` / `High` / `Critical` |
@@ -121,9 +123,9 @@ Follow the chosen template's columns:
 
 Every bug description states: perilaku yang teramati, perilaku yang diharapkan, dan langkah reproduksi — jelas, padat, profesional, tanpa opini kasar.
 
-## Approval Gate
+## Results review
 
-Before writing the file, show the complete results summary and ask for approval:
+Show the complete results summary, then save the requested local report:
 
 > "**Smoke testing selesai. Berikut hasilnya:**
 >
@@ -134,9 +136,9 @@ Before writing the file, show the complete results summary and ask for approval:
 > | Failed | N (%) |
 > | Total Bug | N (Critical: N, High: N, Medium: N, Low: N) |
 >
-> **Simpan ke `List Feedback ({{project_name}}).md`?**"
+> Hasil akan disimpan ke [path List Feedback yang dipilih]."
 
-Write the file only ONCE, after explicit approval.
+Append non-duplicate findings to an existing file in its established template. Ask before replacing an existing file.
 
 ## Final Report (To user after saving)
 

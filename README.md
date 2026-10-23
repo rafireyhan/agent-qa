@@ -1,10 +1,24 @@
-# QA Agent — Claude Code Plugin
+# Sena — portable QA agent
 
-An end-to-end QA workflow for Claude Code. Point it at a staging URL and it goes from exploring the app → writing docs → executing tests → reporting bugs → generating Playwright automation. Every file is written only after you approve it.
+An end-to-end QA workflow for Claude Code, Codex, and Google Antigravity. Sena reads existing requirements and project context, maps an unfamiliar staging app when needed, plans and runs tests, reports bugs, retests fixes, and builds Playwright automation. Requested local artifacts are saved as the work proceeds; choices that affect results are asked once.
 
 ---
 
-## Install
+## Use on each platform
+
+Open this folder as the workspace for native rule and skill discovery. The canonical skill bodies are in `skills/`; `AGENTS.md` routes QA requests and `references/qa-standards.md` holds detailed templates. Platform entry points are small adapters, so the workflow stays the same:
+
+| Platform | Native entry points | Invocation |
+|---|---|---|
+| Claude Code | `CLAUDE.md`, `.claude-plugin/plugin.json`, `skills/`, `agents/` | Say "Sena, ..." or use `/qa-agent:qa-agent` after plugin install |
+| Codex | `AGENTS.md`, `.agents/skills/`, `.codex-plugin/plugin.json` | Say "Sena, ..." or invoke `$qa-agent` when available |
+| Antigravity | `.agents/rules/sena.md`, `.agents/skills/`, `.agents/workflows/sena.md` | Say "Sena, ..." or use `/sena` |
+
+The native rules work when this repository is the workspace. For another application, tell Sena its project folder once; QA artifacts go there. A platform plugin install can also make Sena available inside other workspaces while keeping this package's canonical skills and standards together.
+
+The four files in `agents/` define specialist roles. They are not automatically running processes; Sena uses them when a host supports and authorizes delegation, and otherwise carries out the same QA task directly.
+
+### Claude Code plugin install
 
 Run inside Claude Code:
 
@@ -14,7 +28,7 @@ Run inside Claude Code:
 /reload-plugins
 ```
 
-The `/qa-agent*` commands are then available in any project. See [Prerequisites](#prerequisites) for the skills it depends on.
+Claude Code exposes plugin skills with the `qa-agent:` namespace: use `/qa-agent:qa-agent` for the full workflow or, for example, `/qa-agent:qa-agent-retest` for one phase. The shorter names in the workflow table below identify the canonical skills; invoke them through the entry point of your platform.
 
 ---
 
@@ -22,7 +36,7 @@ The `/qa-agent*` commands are then available in any project. See [Prerequisites]
 
 Two entry points, depending on what you need:
 
-**1. Run the full pipeline** — from URL to automation, with an approval gate between every phase:
+**1. Run the full pipeline** — from requirements or app discovery to automation, with a handoff while developers fix bugs:
 
 ```
 /qa-agent https://staging.example.com
@@ -36,7 +50,7 @@ Or enter at any single phase:
 | `/qa-agent-prd [url]` | 1. Understand | `PRD.md`, `User_Stories.md` |
 | `/qa-agent-documentation` | 2. Plan | `Test_Plan.md`, `Test_Cases.md` |
 | `/qa-agent-manual-testing` | 3. Test | Updated `Test_Cases.md` (pass/fail) + `List_Feedback.md` |
-| `/qa-smoke-test [script] [url]` | 3b. Smoke Test | `List Feedback ({{project_name}}).md` |
+| `/qa-smoke-test [script] [url]` | 3b. Smoke Test | `List_Feedback.md` |
 | `/qa-agent-retest` | 4. Retest | `Smoke_Test_Report.md` + updated files |
 | `/qa-agent-automation` | 5. Automate | Playwright scripts + HTML report |
 
@@ -58,10 +72,10 @@ Structured exploratory testing against a charter — finds edge cases, broken va
 
 ### What every agent does the same way
 
-1. **Ask** — collects required inputs (URL, credentials, scope) before doing anything, and reads existing `qa-docs/*` so it never re-asks what's already known.
+1. **Read** — checks existing requirements, context, and `qa-docs/*`; asks once for missing access or decisions.
 2. **Execute** — runs the task with the appropriate skills (`agent-browser`, `find-bugs`, Playwright, etc.).
-3. **Approval gate** — shows a summary and waits for your review.
-4. **Save** — writes files only after explicit sign-off. **No file is written without you.**
+3. **Report** — records actual evidence and coverage, with List Feedback statuses and severity consistent across phases.
+4. **Save** — writes requested local artifacts; asks before replacing an existing file or taking an unrequested external or destructive action.
 
 ### Where output goes
 
@@ -83,7 +97,7 @@ playwright-report/          # index.html automation report
 | PRD | `/qa-agent-prd` | `agent-browser` | `PRD.md`, `User_Stories.md` |
 | Documentation | `/qa-agent-documentation` | `qa-test-planner`, `test-case-writing` | `Test_Plan.md`, `Test_Cases.md` |
 | Manual Testing | `/qa-agent-manual-testing` | `webapp-testing`, `find-bugs`, `agent-browser` | Updated `Test_Cases.md`, `List_Feedback.md` |
-| Smoke Testing | `/qa-smoke-test` | `agent-browser`, `webapp-testing`, `find-bugs` | `List Feedback ({{project_name}}).md` |
+| Smoke Testing | `/qa-smoke-test` | `agent-browser`, `webapp-testing`, `find-bugs` | `List_Feedback.md` |
 | Retest | `/qa-agent-retest` | `smoke-test`, `ai-regression-testing`, `agent-browser` | `Smoke_Test_Report.md` |
 | Automation | `/qa-agent-automation` | `playwright-*` skills | `tests/playwright/`, HTML report |
 | Exploratory | `/qa-exploratory-testing` | `exploratory-testing`, `agent-browser`, `find-bugs` | `List_Feedback.md` |
@@ -92,11 +106,11 @@ playwright-report/          # index.html automation report
 
 ## App Discovery agent
 
-`/qa-agent-app-discovery` is the **"learn the app first"** step — run it before `/qa-agent-prd` on any app the team hasn't mapped yet. It explores a staging app end-to-end via `agent-browser` (every role, every menu / submenu / child menu, every feature) and produces a structured `{{project_name}}_Context.md` that the rest of the pipeline builds on.
+`/qa-agent-app-discovery` is the **"learn the app first"** step when application documentation is unavailable. Sena asks for existing documentation first, then maps an undocumented staging app via an available browser tool. It produces a structured `{{project_name}}_Context.md` that records what was observed for later planning.
 
 - **Discovery, not testing.** It maps what exists — roles, navigation tree, features, states — it does not assert pass/fail or file bugs.
 - **Every role, every menu.** Walks the full navigation for each role so nothing is missed before test planning starts.
-- **Confirms the save path** before writing, and (like every agent here) writes the file only after your approval.
+- **Uses the project folder** for the context file and asks about the path only when it is ambiguous or would overwrite a file.
 
 Use it when onboarding a new app; skip it and go straight to `/qa-agent-prd` when the app is already understood.
 
@@ -141,7 +155,7 @@ Read at the start of every session; relevant sections applied per feature.
 
 ## List Feedback templates
 
-Any agent that produces `List_Feedback.md` pauses and asks which format to use — no column mixing.
+Any agent that produces `List_Feedback.md` reuses the existing format. If there is no report or explicit choice, Sena asks once which format to use. Columns are never mixed.
 
 **Standard Format (English):** `Bug ID` · `TC ID` · `Bug Title` · `Severity` · `Module` · `Steps to Reproduce` · `Expected` · `Actual` · `Status` · `Dev Notes`
 
@@ -151,7 +165,7 @@ Any agent that produces `List_Feedback.md` pauses and asks which format to use �
 |-----|--------|-------|
 | A | Defect ID | `<AppInitials>-01`, e.g. `LA-01` |
 | B | Date | `DD-MMM-YYYY` |
-| C | Crede | Role or account used during testing |
+| C | Crede | Role and account alias only; full credentials stay in private project context |
 | D | Fitur | Nav path, e.g. `Menu - Submenu - Action` |
 | E | Bug Description | Indonesian — observed, expected, steps + optional `Baiknya…` UX note |
 | F | Priority | Low / Medium / High / Critical |
@@ -166,7 +180,7 @@ Any agent that produces `List_Feedback.md` pauses and asks which format to use �
 
 ## Test case templates (Traceability Matrix)
 
-The Documentation agent can build a Google Sheets Traceability Matrix in **three** templates. Full build procedure, cell-color specs, house-style, and known pitfalls (quota-silent failures, `insertDimension` color loss, row-height auto-fit) live in [`CLAUDE.md`](CLAUDE.md) — read it before building or fixing a matrix.
+The Documentation agent can build a Google Sheets Traceability Matrix in **three** templates. Full build procedure, cell-color specs, house-style, and known pitfalls live in [QA standards](references/qa-standards.md) — read the relevant template section before building or fixing a matrix.
 
 | Template | Roles | Formulas | Negatives / test data | Module sheet naming |
 |----------|-------|----------|-----------------------|---------------------|
@@ -178,9 +192,9 @@ Common to all: statuses default to untested, dates stored as serial numbers with
 
 ---
 
-## Prerequisites
+## Tools
 
-These Claude Code skills must be installed:
+Sena uses the browser, shell, and spreadsheet capabilities available in the host platform. The following optional skills can accelerate specific work; Sena follows the canonical workflow directly when one is unavailable:
 
 `agent-browser` · `exploratory-testing` · `webapp-testing` · `find-bugs` · `qa-test-planner` · `test-case-writing` · `smoke-test` · `ai-regression-testing` · `playwright-cli` · `playwright-best-practices` · `playwright-generate-test` · `playwright-explore-website` · `playwright-automation-fill-in-form`
 
@@ -188,9 +202,14 @@ These Claude Code skills must be installed:
 
 ## Changelog
 
+### 1.4.0
+
+- Shared QA rules and native discovery adapters for Claude Code, Codex, and Antigravity.
+- Evidence-based execution columns, consistent List Feedback statuses and severity, safer credential placement, and fewer redundant approval pauses.
+
 ### 1.3.1
 
-- **New skill & command: `/qa-smoke-test`** — Smoke testing driven by an existing UAT Script / Traceability Matrix (Google Sheets CVKC or local `Test_Cases.md`). Includes preflight parameter checks, ground-truth UI verification, dual-template List Feedback authoring (Kabayan or Standard format), and explicit user approval gate.
+- **New skill & command: `/qa-smoke-test`** — Smoke testing driven by an existing UAT Script / Traceability Matrix (Google Sheets CVKC or local `Test_Cases.md`). Includes preflight parameter checks, ground-truth UI verification, and dual-template List Feedback authoring.
 - **Universal QA Pod Orchestration (Sena)**: Integrated `/qa-smoke-test` into `qa-manual` agent responsibilities and Sena dispatch protocols.
 
 ### 1.2.3

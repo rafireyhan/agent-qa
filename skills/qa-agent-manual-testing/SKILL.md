@@ -4,10 +4,12 @@ description: >
   Agent QA Manual Testing — executes every row in Test_Cases.md against the
   staging app using webapp-testing, find-bugs, and agent-browser skills.
   Updates each row with Passed/Failed status and produces List_Feedback.md
-  with all defects. Pauses for user approval before saving results.
+  with observed defects and saves requested local results.
 argument-hint: "[test-cases-path]"
 license: MIT
 ---
+
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
 
 # Agent QA Manual Testing
 
@@ -23,7 +25,7 @@ Execute every test case in Test_Cases.md and produce:
 
 ### Step 1 — Gather Inputs
 
-If not provided as an argument, ask:
+Check `qa-docs/Test_Cases.md` and project context first. Ask only for a missing path or staging access:
 
 > "**Agent QA Manual Testing** is ready.
 >
@@ -37,15 +39,11 @@ Also read `qa-docs/PRD.md` if available — it provides context for acceptance c
 Show the user a summary before starting:
 > "Loaded **[N] test cases** across **[modules]** against `[URL]`.
 >
-> Ready to begin. This will update each test case with Passed/Failed status and document any bugs found.
->
-> **Shall I start testing?**"
-
-Wait for explicit user approval before executing any test.
+> I will now execute the cases, record observed results, and document bugs."
 
 ### Step 2 — Execute Test Cases
 
-Use `webapp-testing`, `agent-browser`, and `find-bugs` skills to execute each test case row.
+Use the available browser and test tools to execute each row. `webapp-testing`, `agent-browser`, and `find-bugs` are optional helpers, not required for this workflow.
 
 **For each test case, do this in order:**
 
@@ -73,7 +71,7 @@ Use `webapp-testing`, `agent-browser`, and `find-bugs` skills to execute each te
 
 ### Step 3 — Compile Bug Report
 
-Follow the [shared List Feedback rules and Cahya's writing preferences](../../CLAUDE.md#list-feedback-templates), including concise descriptions and no added cell notes or threaded comments unless requested. Apply the user's selected format rather than assuming the generic example below.
+Follow the [shared List Feedback rules and Cahya's writing preferences](../../references/qa-standards.md#list-feedback-templates), including concise descriptions and no added cell notes or threaded comments unless requested. Apply the existing or chosen format rather than assuming the generic example below. Never put credentials in the report.
 
 After all test cases are executed, write `qa-docs/List_Feedback.md`:
 
@@ -102,7 +100,7 @@ After all test cases are executed, write `qa-docs/List_Feedback.md`:
 - **Medium** — feature partially works, workaround exists
 - **Low** — cosmetic defect, minor wording, non-blocking UI glitch
 
-### Step 4 — Approval Gate
+### Step 4 — Results review
 
 Show the complete results summary before saving anything:
 
@@ -122,12 +120,7 @@ Show the complete results summary before saving anything:
 > **Failed test cases:**
 > [list TC IDs and titles that failed]
 >
-> **Review these before I save:**
-> 1. Are there any test cases you'd like me to re-run?
-> 2. Any bug severity adjustments?
-> 3. Should I save the updated Test Cases and Bug Report?"
-
-Only save after explicit approval.
+> I will save the observed results and note any blocked or untested cases."
 
 ### Step 5 — Save Files
 

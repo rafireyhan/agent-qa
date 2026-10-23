@@ -5,10 +5,12 @@ description: >
   scripts using Page Object Model, runs them, and produces an HTML report.
   Uses playwright-explore-website, playwright-generate-test,
   playwright-best-practices, playwright-automation-fill-in-form, and
-  playwright-cli skills. Pauses for user approval before running tests.
+  playwright-cli skills. Saves tests before running them.
 argument-hint: "[test-cases-path]"
 license: MIT
 ---
+
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
 
 # Agent QA Automation
 
@@ -24,7 +26,7 @@ Convert finalized Test Cases into Playwright scripts and run them:
 
 ### Step 1 — Gather Inputs
 
-If not provided as an argument, ask:
+Read the default test cases and project context first. Ask only for a missing path, staging access, or a real scope choice:
 
 > "**Agent QA Automation** is ready.
 >
@@ -43,15 +45,11 @@ Show automation scope:
 > - Modules: [list]
 > - Target URL: [URL]
 >
-> I'll generate Playwright tests using Page Object Model, then run them and produce an HTML report.
->
-> **Shall I proceed?**"
-
-Wait for explicit user approval.
+> I will generate the requested tests, run them, and produce an HTML report."
 
 ### Step 2 — Explore App with Playwright
 
-Use the `playwright-explore-website` skill to map the application:
+Map the application with the available browser tool. Use `playwright-explore-website` if available:
 - Identify all page URLs and routes
 - Extract stable selectors for key interactive elements (prefer `data-testid`, `aria-label`, roles over CSS classes)
 - Map page-to-page navigation flows
@@ -61,7 +59,7 @@ Document the findings as Page Object Model candidates.
 
 ### Step 3 — Generate Playwright Tests
 
-Use `playwright-generate-test`, `playwright-best-practices`, and `playwright-automation-fill-in-form` skills.
+Use existing project Playwright conventions. The `playwright-generate-test`, `playwright-best-practices`, and `playwright-automation-fill-in-form` skills are optional helpers.
 
 **File structure to create:**
 
@@ -138,7 +136,7 @@ test.describe('[Module Name]', () => {
 - Use `playwright-automation-fill-in-form` patterns for any form interactions
 - Follow `playwright-best-practices` for selector strategy and async patterns
 
-**Approval Gate — after generation:**
+**Progress update — after generation:**
 Show the user:
 - Total tests generated
 - File list
@@ -157,13 +155,13 @@ Ask:
 > [first 30 lines of file]
 > ```
 >
-> **Should I save these files and run the tests?**"
+> I will save these files before running the tests."
 
-Only proceed after explicit approval.
+Save generated files to `tests/playwright/` now. Preserve existing project test configuration and dependencies; install only what is missing.
 
 ### Step 4 — Install Dependencies & Run Tests
 
-Use `playwright-cli` to run the tests:
+Run the tests with the project's Playwright installation (or `playwright-cli` if available):
 
 ```bash
 # Install Playwright browsers if needed
@@ -175,7 +173,7 @@ npx playwright test --reporter=html
 
 Show the user real-time output as tests run. If any test fails, show the error and screenshot path.
 
-### Step 5 — Final Approval Gate
+### Step 5 — Results review
 
 After tests complete, show the results:
 
@@ -194,11 +192,11 @@ After tests complete, show the results:
 > **Failed tests:**
 > [list of failed test names and error summaries]
 >
-> Should I save all automation scripts?"
+> Scripts are saved in `tests/playwright/`."
 
-### Step 6 — Save Files
+### Step 6 — Finish
 
-Write all generated files to `tests/playwright/`. The HTML report is already written by Playwright.
+Verify the saved scripts and HTML report paths.
 
 Confirm:
 > "**Agent QA Automation complete.**

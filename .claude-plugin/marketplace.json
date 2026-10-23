@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "qa-agent",
-  "description": "End-to-end QA workflow with 5 agents: PRD analysis, test documentation, manual testing, retest, and Playwright automation.",
+  "description": "Sena QA workflows: discovery, requirements, test planning, execution, retest, and automation.",
   "owner": {
     "name": "mcahya20",
     "url": "https://github.com/rafireyhan"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "qa-agent",
-      "description": "5-agent QA workflow: PRD → Test Documentation → Manual Testing → Retest → Playwright Automation. Each agent pauses for user approval before saving any output.",
+      "description": "Sena QA workflow: discovery → requirements → test planning → execution → retest → automation.",
       "source": "./",
       "category": "testing"
     }

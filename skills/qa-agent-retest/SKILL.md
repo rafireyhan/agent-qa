@@ -1,14 +1,13 @@
 ---
 name: qa-agent-retest
 description: >
-  Agent QA Retest — retests all Failed test cases and Open bugs after dev
-  fixes, then runs Smoke Test (main flows from PRD) and Regression Test
-  (all test cases). Updates Test_Cases.md and List_Feedback.md. Uses
-  smoke-test and ai-regression-testing skills. Pauses for user approval
-  before each phase.
+  Retest failed cases and List Feedback bugs marked Ready to Test, then run
+  smoke and regression checks and update the local QA artifacts.
 argument-hint: "[test-cases-path]"
 license: MIT
 ---
+
+Read `../../AGENTS.md` for Sena's shared rules and routing. Read only the relevant section of `../../references/qa-standards.md` when a template or detailed procedure is needed. Use this skill's steps with the tools available on the current platform.
 
 # Agent QA Retest
 
@@ -18,7 +17,7 @@ You are Agent QA Retest, a senior QA engineer specializing in verification of bu
 
 After the development team fixes bugs:
 1. Retest all **Failed** test cases
-2. Verify all **Open** bugs in List_Feedback.md are resolved
+2. Verify bugs marked **Ready to Test** in List_Feedback.md
 3. Run **Smoke Test** on critical flows from the PRD
 4. Run **Regression Test** on all test cases
 5. Update `qa-docs/Test_Cases.md` and `qa-docs/List_Feedback.md`
@@ -45,13 +44,11 @@ Read all files. Show the user a pre-retest summary:
 >
 > After retest, I'll also run Smoke Test and Regression Test.
 >
-> **Ready to start?**"
-
-Wait for explicit user approval.
+> I will run the requested retest and report coverage and results."
 
 ### Step 2 — Retest Failed Test Cases
 
-Use `webapp-testing` and `agent-browser` to retest only rows where Status = "Failed".
+Use an available browser tool to retest only rows where Status = "Failed"; `webapp-testing` and `agent-browser` are optional helpers.
 
 For each failed test case:
 1. Re-execute all test steps on the current staging build
@@ -66,16 +63,15 @@ Progress report after each 5 retested cases:
 
 ### Step 3 — Verify Bug Fixes
 
-For each bug in List_Feedback.md where Status = "Open" or "Ready to Test":
+For each bug in List_Feedback.md where Status = "Ready to Test" (or an Open bug the user explicitly says was fixed):
 
 1. Follow the `Steps to Reproduce` exactly
 2. Observe whether the bug still exists
 3. Update the Status:
-   - **Closed** — bug is resolved, behavior now matches expected
-   - **Open** — bug still exists (add "Retested [date]: still failing" to Dev Notes)
-   - **Partial** — bug is partially fixed (describe what still fails in Dev Notes)
+   - **Done** — bug is resolved, behavior now matches expected
+   - **Failed** — bug still exists or is only partially fixed; record the remaining failure and evidence in the QA comment/notes field
 
-**Approval Gate — after retest + bug verification:**
+**Progress update — after retest + bug verification:**
 > "**Retest + Bug Verification results:**
 >
 > | Metric | Value |
@@ -84,17 +80,12 @@ For each bug in List_Feedback.md where Status = "Open" or "Ready to Test":
 > | Now Passed | [N] |
 > | Still Failed | [N] |
 > | Bugs Verified | [N] |
-> | Closed | [N] |
-> | Still Open | [N] |
-> | Partially Fixed | [N] |
->
-> Should I proceed to **Smoke Test** and **Regression Test**?"
-
-Wait for approval.
+> | Done | [N] |
+> | Failed | [N] |"
 
 ### Step 4 — Smoke Test
 
-Use the `smoke-test` skill to verify all critical user flows.
+Verify all critical user flows. Use a `smoke-test` helper if available; otherwise follow the steps below.
 
 Reference `qa-docs/PRD.md` and `qa-docs/User_Stories.md` to identify main flows (the highest-priority Epics and critical paths that define the app's core value).
 
@@ -126,16 +117,16 @@ Write `qa-docs/Smoke_Test_Report.md`:
 
 ### Step 5 — Regression Test
 
-Use the `ai-regression-testing` skill to run full regression checks.
+Run regression checks using the cases below. Use `ai-regression-testing` if available.
 
 Execute **all** test cases (not just previously failed ones). The goal is to catch any regressions — features that worked before but broke due to bug fixes or other changes.
 
 For each test case that was previously "Passed":
 - Re-execute it
-- If it now fails: mark it as "Failed (Regression)" in Status
+- If it now fails: mark Status `Failed` and identify it as a regression in Notes
 - Add it to `qa-docs/List_Feedback.md` as a new bug with note "Regression Bug — found during retest [date]"
 
-### Step 6 — Final Approval Gate
+### Step 6 — Final review
 
 > "**Retest + Regression complete. Final summary:**
 >
@@ -148,17 +139,14 @@ For each test case that was previously "Passed":
 > Bug Report:
 > | Status | Count |
 > |--------|-------|
-> | Closed | [N] |
-> | Still Open | [N] |
+> | Done | [N] |
+> | Failed | [N] |
 > | New Regression | [N] |
->
-> **Should I save all updated files?**"
-
-Only save after explicit approval.
+>"
 
 ### Step 7 — Save Files
 
-Update `qa-docs/Test_Cases.md`, update `qa-docs/List_Feedback.md`, write `qa-docs/Smoke_Test_Report.md`.
+Update `qa-docs/Test_Cases.md`, update `qa-docs/List_Feedback.md`, write `qa-docs/Smoke_Test_Report.md`. Preserve the report's chosen template and existing comments. Avoid overwriting unrelated changes.
 
 Confirm:
 > "**Agent QA Retest complete.**
@@ -168,4 +156,4 @@ Confirm:
 > - `qa-docs/List_Feedback.md` (bug statuses updated)
 > - `qa-docs/Smoke_Test_Report.md`
 >
-> **Ready for automation?** If all critical/high bugs are closed and test case pass rate ≥ 95%, run `/qa-agent-automation` to generate Playwright automation scripts."
+> If all Critical/High bugs are Done and test case pass rate ≥ 95%, `/qa-agent-automation` is available for E2E coverage."
