@@ -198,9 +198,15 @@ Sena uses the browser, shell, and spreadsheet capabilities available in the host
 
 `agent-browser` · `exploratory-testing` · `webapp-testing` · `find-bugs` · `qa-test-planner` · `test-case-writing` · `smoke-test` · `ai-regression-testing` · `playwright-cli` · `playwright-best-practices` · `playwright-generate-test` · `playwright-explore-website` · `playwright-automation-fill-in-form`
 
+**Humanizer is bundled.** Sena and all four QA specialists use it for the prose in test cases and bug reports. It improves readability in the chosen language while preserving requirements, steps, test data, observed results, IDs, severity, status, evidence, and the selected template. The bundled [humanizer skill](skills/humanizer/SKILL.md) is upstream v3.1.0 from [blader/humanizer at commit `8c307f3`](https://github.com/blader/humanizer/tree/8c307f367c91bd974002f10f2be2965d642c13df), under its included [MIT license](skills/humanizer/LICENSE). Claude Code also exposes it as `/qa-agent:humanizer`.
+
 ---
 
 ## Changelog
+
+### 1.5.0
+
+- Bundled humanizer for Sena and all four QA specialists when writing test cases and bug reports, with QA facts and templates protected.
 
 ### 1.4.0
 

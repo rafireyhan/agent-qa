@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "qa-agent",
-  "description": "Sena QA workflows: discovery, requirements, test planning, execution, retest, and automation.",
+  "description": "Sena QA workflows: discovery, requirements, test planning, execution, retest, automation, and clear QA writing.",
   "owner": {
     "name": "mcahya20",
     "url": "https://github.com/rafireyhan"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "qa-agent",
-      "description": "Sena QA workflow: discovery → requirements → test planning → execution → retest → automation.",
+      "description": "Sena QA workflow: discovery → requirements → test planning → execution → retest → automation, with humanizer for QA writing.",
       "source": "./",
       "category": "testing"
     }

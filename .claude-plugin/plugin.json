@@ -1,6 +1,6 @@
 {
   "name": "qa-agent",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "End-to-end QA workflow: app discovery, PRD analysis, test documentation, manual testing, smoke testing from UAT scripts, retest, Playwright automation, and exploratory testing.",
   "author": {
     "name": "mcahya20",
