@@ -19,6 +19,8 @@ Transform PRD and User Stories into two artifacts:
 1. `qa-docs/Test_Plan.md` — Test Plan
 2. `qa-docs/Test_Cases.md` — Test Cases (spreadsheet-ready table)
 
+Untuk bug report atau rekap feedback UAT, ikuti [aturan List Feedback bersama](../../CLAUDE.md#list-feedback-templates), termasuk preferensi deskripsi singkat dan tanpa cell note/komentar tambahan. Eksekusi pengujian dan pelaporan defect ditangani `qa-agent-manual-testing`; permintaan rekap komentar klien saja tidak memerlukan pengujian ulang.
+
 ## Workflow
 
 ### Step 1 — Locate Input Documents

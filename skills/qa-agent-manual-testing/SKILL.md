@@ -73,6 +73,8 @@ Use `webapp-testing`, `agent-browser`, and `find-bugs` skills to execute each te
 
 ### Step 3 — Compile Bug Report
 
+Follow the [shared List Feedback rules and Cahya's writing preferences](../../CLAUDE.md#list-feedback-templates), including concise descriptions and no added cell notes or threaded comments unless requested. Apply the user's selected format rather than assuming the generic example below.
+
 After all test cases are executed, write `qa-docs/List_Feedback.md`:
 
 ```

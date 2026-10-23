@@ -347,6 +347,15 @@ lives in the `qa-exploratory-testing` skill.
 
 ## List Feedback Templates
 
+### Preferensi Penulisan List Feedback Cahya
+
+Berlaku saat membuat atau mengedit bug report dan rekap feedback UAT. Ikuti template serta contoh yang sudah diedit pengguna.
+
+- **Bug Description:** gunakan Bahasa Indonesia yang natural, singkat, padat, dan jelas; umumnya 1–2 kalimat yang menjelaskan pemicu, masalah, dan hasil yang diharapkan. Hindari label berulang, pembukaan formal, dan menyalin seluruh test case.
+- **Attachment / Comment From QA:** cukup `Sumber: <modul> - <SC> - <TC>` dengan label sumber tertaut ke step UAT terkait, lalu bukti yang tersedia di bawah `Bukti yang dilampirkan klien:`. Pertahankan seluruh rujukan bila laporan terkait digabung; hilangkan bagian bukti jika tidak ada lampiran.
+- **Tanpa cell note atau threaded comment tambahan kecuali diminta.** Jangan memindahkan draf lama, salinan sumber, audit trail, atau penjelasan tambahan ke note tersembunyi ketika meringkas laporan.
+- Pertahankan edit dan tautan pengguna. Saat diminta membersihkan note buatan asisten, hapus hanya note tersebut; pertahankan note pengguna atau klien kecuali penghapusannya diminta.
+
 ### Template Selection Rule (REQUIRED)
 
 **Never generate a List Feedback immediately.** This rule applies whenever List Feedback output is triggered by:
